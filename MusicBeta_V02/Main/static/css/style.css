@@ -1,0 +1,550 @@
+:root {
+    --color-primary: #FF9800;
+    --color-primary-light: #FFB74D;
+    --color-secondary: #f0f0f0;
+    --color-text-dark: #333;
+    --color-text-light: #666;
+    --color-background: #fdf6ec;
+    --color-white: #ffffff;
+    --color-danger: #e74c3c;
+    --font-family: 'Roboto', sans-serif;
+    --header-height: 70px;
+}
+
+/* Adicionado para garantir que o padding não cause overflow */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--color-background);
+    color: var(--color-text-dark);
+    margin: 0;
+    padding-top: var(--header-height);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 0 20px;
+    height: var(--header-height);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.header-content {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-left-side {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.header-right-side {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--color-white);
+    gap: 10px;
+}
+
+.logo-image {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.logo-link span {
+    font-size: 1.5rem;
+    font-weight: 900;
+}
+
+header nav a {
+    text-decoration: none;
+    color: inherit;
+    font-size: 1rem;
+    padding: 8px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+header nav a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-info span {
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.btn-logout {
+    background-color: #f75c4e;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 50px;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 0.8rem;
+    transition: background-color 0.3s ease;
+}
+
+.btn-logout:hover {
+    background-color: var(--color-danger);
+}
+
+main {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.container {
+    max-width: 960px;
+    width: 100%;
+    background-color: var(--color-white);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h2, h3 {
+    color: var(--color-primary);
+    font-weight: 700;
+    margin-top: 0;
+}
+
+.message {
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Formulários */
+.formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.formulario label {
+    font-weight: 600;
+    color: var(--color-text-light);
+}
+
+.formulario input,
+.formulario textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.formulario input:focus,
+.formulario textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.2);
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn.btn-action {
+    flex: 1;
+    max-width: 120px;
+    text-align: center;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn.cancel {
+    background-color: var(--color-text-light);
+}
+
+/* Páginas de Login e Cadastro (Nova Estilização) */
+.login-body {
+    background-color: var(--color-primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.login-box {
+    background-color: var(--color-white);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    max-width: 90%;
+    width: 100%;
+}
+
+.login-box h1 {
+    font-size: 2rem;
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.login-subtitle {
+    color: var(--color-text-light);
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+}
+
+.login-logo {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-logo img {
+    height: 60px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.login-form input {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 50px;
+    text-align: center;
+}
+
+.login-btn, .btn-secondary {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 15px 30px;
+    border-radius: 50px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-btn {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    margin-bottom: 15px;
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary);
+    text-decoration: none;
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-primary-light);
+    color: var(--color-white);
+}
+
+/* Página Home (Biblioteca) */
+.welcome-section {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.welcome-section h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.welcome-section p {
+    color: var(--color-text-light);
+}
+
+.btn-primary {
+    display: inline-block;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.cycle-list-section {
+    margin-top: 40px;
+}
+
+.cycle-list-section h3 {
+    border-bottom: 2px solid var(--color-primary);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.cycle-list {
+    list-style: none;
+    padding: 0;
+}
+
+.cycle-item {
+    background: var(--color-secondary);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cycle-item a {
+    text-decoration: none;
+    color: var(--color-text-dark);
+    font-weight: bold;
+    flex-grow: 1;
+    margin-right: 15px;
+}
+
+.cycle-actions a {
+    margin-left: 10px;
+}
+
+.btn-sm {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    text-transform: none;
+    font-weight: normal;
+}
+
+.btn-success { background-color: #28a745; color: white; }
+.btn-danger { background-color: #dc3545; color: white; }
+
+/* Página de Perfil */
+.profile-container {
+    text-align: center;
+}
+
+.profile-header {
+    background-color: var(--color-white);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.profile-image-container {
+    width: 150px;
+    height: 150px;
+    background-color: var(--color-secondary);
+    border-radius: 50%;
+    margin: 0 auto 20px auto;
+    overflow: hidden;
+    position: relative;
+    border: 5px solid var(--color-primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-image, .profile-image-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.header-profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--color-white);
+}
+
+.profile-header h2 {
+    font-size: 2rem;
+    color: var(--color-text-dark);
+    margin-bottom: 15px;
+}
+
+.profile-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.btn-edit-profile {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-logout-profile {
+    background-color: var(--color-danger);
+    color: var(--color-white);
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-stats {
+    display: flex;
+    justify-content: space-around;
+    padding: 15px;
+    background-color: var(--color-secondary);
+    border-radius: 10px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+    color: var(--color-text-dark);
+}
+
+.stat-item span:first-child {
+    font-size: 1.5rem;
+    color: var(--color-primary);
+}
+
+.profile-bio, .profile-cycles {
+    background-color: var(--color-white);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    margin-top: 20px;
+}
+
+.profile-bio h3, .profile-cycles h3 {
+    border-bottom: 2px solid var(--color-primary-light);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+.profile-bio p, .profile-cycles .no-items {
+    color: var(--color-text-light);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        height: auto;
+        padding: 10px;
+    }
+    .header-content {
+        flex-direction: column;
+        gap: 10px;
+    }
+    header h1 {
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    .header-right-side {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .user-info {
+        flex-direction: column;
+        gap: 5px;
+    }
+    .user-info span {
+        text-align: center;
+    }
+    .container {
+        padding: 20px;
+    }
+}

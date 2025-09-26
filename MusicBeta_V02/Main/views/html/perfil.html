@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Perfil{% endblock %}
+
+{% block content %}
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-image-container">
+                {% if usuario.caminho_foto_perfil %}
+                    <img src="{{ url_for('static', filename=usuario.caminho_foto_perfil) }}" alt="Foto de Perfil" class="profile-image">
+                {% else %}
+                    <div class="profile-image-placeholder">
+                        <img src="{{ url_for('static', filename='images/default_profile_pic.png') }}" alt="Foto de Perfil Padrão">
+                    </div>
+                {% endif %}
+            </div>
+            <h2>{{ usuario.nome_completo if usuario.nome_completo else usuario.username }}</h2>
+            <div class="profile-actions">
+                <a href="{{ url_for('routes.editar_perfil') }}" class="btn btn-edit-profile">EDIT PROFILE</a>
+                <a href="{{ url_for('routes.logout') }}" class="btn btn-logout-profile">LOG OUT</a>
+            </div>
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <span>{{ incompletos }}</span>
+                    <span>incompletos</span>
+                </div>
+                <div class="stat-item">
+                    <span>{{ concluidos }}</span>
+                    <span>Concluídos</span>
+                </div>
+                <div class="stat-item">
+                    <span>{{ publicados }}</span>
+                    <span>Publicados</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-bio">
+            <h3>Sobre mim</h3>
+            <p>{{ usuario.biografia if usuario.biografia else 'Escreva uma curta biografia...' }}</p>
+        </div>
+    </div>
+{% endblock %}
