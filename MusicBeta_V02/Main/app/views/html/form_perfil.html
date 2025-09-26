@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Perfil{% endblock %}
+
+{% block content %}
+    <div class="profile-form-container">
+        <h2>✏️ Editar Perfil</h2>
+        <form action="{{ url_for('routes.editar_perfil') }}" method="POST" class="formulario" enctype="multipart/form-data">
+
+            <label for="username">Nome de Usuário:</label>
+            <input type="text" id="username" name="username" value="{{ usuario.username }}" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="{{ usuario.email }}" required>
+
+            <label for="nome_completo">Nome Completo:</label>
+            <input type="text" id="nome_completo" name="nome_completo" value="{{ usuario.nome_completo }}" required>
+
+            <label for="biografia">Sobre mim:</label>
+            <textarea id="biografia" name="biografia" rows="3">{{ usuario.biografia if usuario.biografia else '' }}</textarea>
+
+            <label for="foto_perfil" class="file-label">
+                <span class="file-label-text">Alterar Foto de Perfil</span>
+                <input type="file" id="foto_perfil" name="foto_perfil" class="file-input">
+            </label>
+
+            <div class="form-actions">
+                <button type="submit" class="btn">Salvar Alterações</button>
+                <a href="{{ url_for('routes.perfil') }}" class="btn cancel">Cancelar</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

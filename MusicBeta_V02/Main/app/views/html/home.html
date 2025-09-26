@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Biblioteca{% endblock %}
+
+{% block content %}
+    <div class="welcome-section">
+        <a href="{{ url_for('routes.novo_ciclo') }}" class="btn btn-primary">
+            + CRIAR NOVO CICLO DE COLETAS
+        </a>
+        <p>Aqui você poderá começar sua pesquisa seguindo a metodologia CARDC!</p>
+    </div>
+
+    <div class="cycle-list-section">
+        <h3>Ciclos em andamento</h3>
+        {% if ciclos_em_andamento %}
+            <ul class="cycle-list">
+                {% for ciclo in ciclos_em_andamento %}
+                    <li class="cycle-item">
+                        <a href="{{ url_for('routes.editar_ciclo', ciclo_id=ciclo.id) }}">
+                            {{ ciclo.obra }} - {{ ciclo.compositor }}
+                        </a>
+                        <div class="cycle-actions">
+                            <a href="{{ url_for('routes.finalizar_ciclo', ciclo_id=ciclo.id) }}" class="btn-sm btn-success">Finalizar</a>
+                            <a href="{{ url_for('routes.remover_ciclo', ciclo_id=ciclo.id) }}" class="btn-sm btn-danger">Excluir</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="no-items">Nenhum ciclo em andamento.</p>
+        {% endif %}
+
+        <h3>Ciclos finalizados</h3>
+        {% if ciclos_finalizados %}
+            <ul class="cycle-list">
+                {% for ciclo in ciclos_finalizados %}
+                    <li class="cycle-item">
+                        <a href="{{ url_for('routes.editar_ciclo', ciclo_id=ciclo.id) }}">
+                            {{ ciclo.obra }} - {{ ciclo.compositor }}
+                        </a>
+                        <div class="cycle-actions">
+                            <a href="{{ url_for('routes.remover_ciclo', ciclo_id=ciclo.id) }}" class="btn-sm btn-danger">Excluir</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="no-items">Nenhum ciclo finalizado.</p>
+        {% endif %}
+    </div>
+{% endblock %}
