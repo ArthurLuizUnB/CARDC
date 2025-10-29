@@ -1,3 +1,0 @@
-# Especifica a versão do Python para evitar o bug de compatibilidade com SQLAlchemy 2.0 e Python 3.13
-python:
-  version: 3.11.9
