@@ -1,1 +1,1 @@
-web: gunicorn --chdir MusicBeta_V02/Main app:app
+web: python MusicBeta_V02/Main/init_db_script.py && gunicorn MusicBeta_V02.Main.app:app

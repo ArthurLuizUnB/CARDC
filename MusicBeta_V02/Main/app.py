@@ -43,10 +43,6 @@ def shutdown_session(exception=None):
 # GARANTE QUE A ENGINE SEJA FECHADA AO DESLIGAR
 atexit.register(lambda: engine.dispose())
 
-# CORREÇÃO: CRIAÇÃO DA TABELA NA INICIALIZAÇÃO DO CONTEXTO DO APLICATIVO
-with app.app_context():
-    init_db() 
-
 @app.context_processor
 def inject_now():
     return {'now': datetime.now()}
