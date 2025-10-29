@@ -1,5 +1,3 @@
-# app.py (VERSÃO FINAL PARA O DEPLOY)
-
 from flask import Flask, g, current_app 
 from routes.routes import routes
 from datetime import datetime
@@ -9,7 +7,7 @@ from models.bcrypt_config import bcrypt
 from models.database_config import Base, Session 
 from sqlalchemy import create_engine
 import atexit 
-from models import usuario, ciclo_de_estudo # Importar modelos aqui para garantir que Base os conheça
+from models import usuario, ciclo_de_estudo # Importar modelos aqui para que Base os conheça
 
 app = Flask(__name__, template_folder="views/html")
 
@@ -31,7 +29,7 @@ engine = create_engine(DATABASE_URI, convert_unicode=True)
 Session.configure(bind=engine)
 Base.metadata.bind = engine
 
-# FUNÇÃO DE CRIAÇÃO DE TABELAS (para ser chamada na inicialização)
+# FUNÇÃO DE CRIAÇÃO DE TABELAS (para ser chamada externamente)
 def init_db():
     Base.metadata.create_all(bind=engine)
 
@@ -49,4 +47,8 @@ def inject_now():
 
 app.register_blueprint(routes)
 
-# REMOVIDO: O bloco if __name__ == "__main__":
+if __name__ == "__main__":
+    # Mantém esta função apenas para desenvolvimento local
+    with app.app_context():
+        init_db()
+    app.run(host="0.0.0.0", port=5000, debug=True)
