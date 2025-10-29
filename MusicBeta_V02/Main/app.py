@@ -1,29 +1,49 @@
-from flask import Flask
+# app.py
+
+from flask import Flask, g, current_app # Adicionado g e current_app
 from routes.routes import routes
 from datetime import datetime
 import os 
 import uuid 
-from models.database_config import db 
+# REMOVIDO: from models.database_config import db 
 from models.bcrypt_config import bcrypt 
+from models.database_config import Base, Session # NOVO: Importa Base e Session
+from sqlalchemy import create_engine
+import atexit 
 
 app = Flask(__name__, template_folder="views/html")
 
-# --- BLOCO DE CONFIGURAÇÃO (ORDEM CORRETA) ---
+# --- CONFIGURAÇÕES ---
 app.secret_key = os.environ.get("SECRET_KEY", os.urandom(24)) 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+DATABASE_URI = os.environ.get(
     'DATABASE_URL', 
     'sqlite:///db.sqlite3'
-).replace('postgres://', 'postgresql://') 
+).replace('postgres://', 'postgresql://')
 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = 'static/images/uploads'
-# --- FIM DO BLOCO DE CONFIGURAÇÃO ---
-
 
 # 2. INICIALIZAÇÃO DE EXTENSÕES
-db.init_app(app) 
 bcrypt.init_app(app)
+
+# 3. GERENCIAMENTO DE SESSÃO SQLALCHEMY (NOVO E CORRIGIDO)
+engine = create_engine(DATABASE_URI, convert_unicode=True)
+Session.configure(bind=engine)
+Base.metadata.bind = engine
+
+# FECHA A SESSÃO APÓS CADA REQUEST (TEARDOWN)
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    Session.remove()
+
+# GARANTE QUE A ENGINE SEJA FECHADA AO DESLIGAR
+atexit.register(lambda: engine.dispose())
+
+# FUNÇÃO PARA CRIAR AS TABELAS
+def init_db():
+    # Importa os modelos para serem reconhecidos pelo Base
+    from models import usuario, ciclo_de_estudo 
+    Base.metadata.create_all(bind=engine)
 
 @app.context_processor
 def inject_now():
@@ -33,5 +53,5 @@ app.register_blueprint(routes)
 
 if __name__ == "__main__":
     with app.app_context():
-        db.create_all()     
+        init_db() # Cria as tabelas
     app.run(host="0.0.0.0", port=5000, debug=True)
