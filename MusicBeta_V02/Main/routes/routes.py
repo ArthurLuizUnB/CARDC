@@ -9,19 +9,22 @@ from functools import wraps
 
 routes = Blueprint("routes", __name__)
 
+# routes/routes.py
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not AuthController.usuario_logado():
             return redirect(url_for("routes.login"))
         
-        # NOVO: g.usuario_atual agora armazena o OBJETO Usuario, não o dicionário
         g.usuario_atual = AuthController.usuario_atual()
         
-        # Garante que, se for um objeto Usuario (SQLAlchemy), ele tenha um ID
+        # CORREÇÃO CRÍTICA PARA SESSÃO ANTIGA (NOVA LÓGICA):
         if not g.usuario_atual or not hasattr(g.usuario_atual, 'id'):
-            # Caso o objeto retornado esteja incompleto ou seja None (imprevisto)
-            return redirect(url_for("routes.logout"))
+            # Se o usuário logado (pela sessão) não puder ser encontrado no novo BD
+            AuthController.fazer_logout()
+            flash("Sessão expirada. Por favor, faça login novamente.", "info")
+            return redirect(url_for("routes.login"))
             
         return f(*args, **kwargs)
     return decorated_function
