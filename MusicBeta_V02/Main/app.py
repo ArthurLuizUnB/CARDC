@@ -1,12 +1,12 @@
 # app.py
 
-from flask import Flask, g, current_app # Adicionado g e current_app
+from flask import Flask, g, current_app 
 from routes.routes import routes
 from datetime import datetime
 import os 
 import uuid 
 # REMOVIDO: from models.database_config import db 
-from models.bcrypt_config import bcrypt 
+from models.bcrypt_config import bcrypt # Assumindo que este arquivo existe
 from models.database_config import Base, Session # NOVO: Importa Base e Session
 from sqlalchemy import create_engine
 import atexit 
@@ -26,7 +26,7 @@ app.config['UPLOAD_FOLDER'] = 'static/images/uploads'
 # 2. INICIALIZAÇÃO DE EXTENSÕES
 bcrypt.init_app(app)
 
-# 3. GERENCIAMENTO DE SESSÃO SQLALCHEMY (NOVO E CORRIGIDO)
+# 3. GERENCIAMENTO DE SESSÃO SQLALCHEMY (NOVO)
 engine = create_engine(DATABASE_URI, convert_unicode=True)
 Session.configure(bind=engine)
 Base.metadata.bind = engine
@@ -41,7 +41,6 @@ atexit.register(lambda: engine.dispose())
 
 # FUNÇÃO PARA CRIAR AS TABELAS
 def init_db():
-    # Importa os modelos para serem reconhecidos pelo Base
     from models import usuario, ciclo_de_estudo 
     Base.metadata.create_all(bind=engine)
 

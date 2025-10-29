@@ -1,37 +1,37 @@
-from models.database_config import db 
+from models.database_config import Session # NOVO: Importa a Session pura do SQLAlchemy
 from models.usuario import Usuario
 from flask import session
 import uuid
 from helpers.upload_helper import save_profile_picture
 from sqlalchemy import or_ # Adicionado para consultas ORM
-from models.bcrypt_config import bcrypt
+from models.bcrypt_config import bcrypt # Assumindo que este arquivo existe
 
 class AuthController:
 
     @staticmethod
     def listar_usuarios():
-        # NOVO: Busca todos os usuários
-        return Usuario.query.all()
+        # NOVO: Consulta com Session.query(Modelo).all()
+        return Session.query(Usuario).all()
 
     @staticmethod
     def buscar_por_username(username):
-        # NOVO: Busca o primeiro usuário com o username correspondente
-        return Usuario.query.filter_by(username=username).first()
+        # NOVO: Consulta com Session.query
+        return Session.query(Usuario).filter_by(username=username).first()
 
     @staticmethod
     def buscar_por_id(id_usuario):
-        # NOVO: Busca o usuário pela chave primária
-        return Usuario.query.get(id_usuario)
+        # NOVO: Consulta com Session.get()
+        return Session.get(Usuario, id_usuario)
 
     @staticmethod
     def validar_credenciais(username, password):
-        # NOVO: Busca o usuário pelo username OU email
-        usuario = Usuario.query.filter(
+        # NOVO: Busca o usuário pelo username OU email usando Session
+        usuario = Session.query(Usuario).filter(
             or_(Usuario.username == username, Usuario.email == username)
         ).first()
 
         if usuario:
-            # NOVO: Verifica a senha usando Bcrypt (comparação segura)
+            # Verifica a senha usando Bcrypt
             if bcrypt.check_password_hash(usuario.password, password):
                 return usuario, None
         
@@ -39,8 +39,21 @@ class AuthController:
 
     @staticmethod
     def autenticar(username, password):
-        return AuthController.validar_credenciais(username, password)
-    
+        # NOTA: O método autenticar deve chamar validar_credenciais para mensagens de erro mais detalhadas
+        valido, erro = AuthController.validar_credenciais(username, password)
+        if not valido:
+            return None, erro
+
+        # NOVO: Busca o usuário pelo username OU email usando Session
+        usuario = Session.query(Usuario).filter(
+            or_(Usuario.username == username, Usuario.email == username)
+        ).first()
+        
+        if usuario and bcrypt.check_password_hash(usuario.password, password):
+            return usuario, None
+
+        return None, "Nome de usuário/email ou senha incorretos."
+
     @staticmethod
     def adicionar_usuario(username, email, password, profile_pic_file=None, nome_completo=None):
         id_usuario = str(uuid.uuid4())
@@ -68,12 +81,12 @@ class AuthController:
             caminho_foto_perfil=caminho_foto_perfil
         )
 
-        # NOVO: Adiciona o objeto à sessão e salva no banco de dados
-        db.session.add(novo_usuario)
+        # NOVO: Adiciona o objeto à sessão Pura e salva
+        Session.add(novo_usuario)
         try:
-            db.session.commit()
+            Session.commit()
         except Exception as e:
-            db.session.rollback()
+            Session.rollback()
             return None, "Erro ao salvar o novo usuário no banco de dados."
         
         return novo_usuario, None
@@ -96,16 +109,20 @@ class AuthController:
     @staticmethod
     def usuario_atual():
         if AuthController.usuario_logado():
-            usuario_data = {
-                'id': session.get('user_id'),
+            usuario_id = session.get('user_id')
+            # NOVO: Consulta o objeto completo
+            usuario_completo = AuthController.buscar_por_id(usuario_id)
+            
+            # Não é mais necessário retornar um dicionário, retorna o objeto puro
+            if usuario_completo:
+                return usuario_completo
+            
+            # Fallback (não deve ser necessário se o login foi bem-sucedido)
+            return {
+                'id': usuario_id,
                 'username': session.get('username'),
                 'is_admin': session.get('is_admin', False)
             }
-            usuario_completo = AuthController.buscar_por_id(usuario_data['id'])
-            
-            if usuario_completo:
-                return usuario_completo
-            return usuario_data
         return None
 
     @staticmethod
@@ -121,9 +138,9 @@ class AuthController:
 
         # NOVO: O SQLAlchemy detecta a mudança no objeto e faz o update no commit
         try:
-            db.session.commit()
+            Session.commit()
         except Exception as e:
-            db.session.rollback()
+            Session.rollback()
             return "Erro ao atualizar o usuário no banco de dados."
         
         return None

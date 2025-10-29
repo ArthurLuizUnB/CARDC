@@ -1,34 +1,39 @@
-import uuid
-from .database_config import db # NOVO: Importa o objeto db
+# models/ciclo_de_estudo.py
 
-class CicloDeEstudo(db.Model): # NOVO: Herda de db.Model
+import uuid
+from models.database_config import Base # NOVO: Importa Base
+from sqlalchemy import Column, String, Text, ForeignKey
+from sqlalchemy.orm import relationship 
+
+# Novo: Classe herda de Base e define a tabela
+class CicloDeEstudo(Base):
     __tablename__ = 'ciclos_de_estudo'
 
     # Colunas da Tabela
-    id = db.Column(db.String, primary_key=True)
+    id = Column(String, primary_key=True)
+    # Chave estrangeira ligada à tabela 'usuarios'
+    id_usuario = Column(String, ForeignKey('usuarios.id'), nullable=False) 
     
-    # NOVO: Chave Estrangeira. Linka com a tabela 'usuarios'
-    id_usuario = db.Column(db.String, db.ForeignKey('usuarios.id'), nullable=False) 
-    
-    obra = db.Column(db.String(255), nullable=False)
-    compositor = db.Column(db.String(255), nullable=False)
-    data_inicio = db.Column(db.String(10), nullable=False)
-    data_finalizacao = db.Column(db.String(10), nullable=True)
-    link_gravacao = db.Column(db.String(255), nullable=True)
-    consideracoes_preliminares = db.Column(db.Text, nullable=True)
-    acao_artistica = db.Column(db.Text, nullable=True)
-    descricao_tarefa = db.Column(db.Text, nullable=True)
-    resultado_tecnico = db.Column(db.Text, nullable=True)
-    resultado_musical = db.Column(db.Text, nullable=True)
-    observacoes = db.Column(db.Text, nullable=True)
-    pensamentos_associados = db.Column(db.Text, nullable=True)
-    emocoes_associadas = db.Column(db.Text, nullable=True)
-    diario_reflexivo = db.Column(db.Text, nullable=True)
-    status = db.Column(db.String(20), default="em_andamento")
-    capa_url = db.Column(db.String(255), nullable=True)
+    obra = Column(String(255), nullable=False)
+    compositor = Column(String(255), nullable=False)
+    data_inicio = Column(String(10), nullable=False)
+    data_finalizacao = Column(String(10), nullable=True)
+    link_gravacao = Column(String(255), nullable=True)
+    consideracoes_preliminares = Column(Text, nullable=True)
+    acao_artistica = Column(Text, nullable=True)
+    descricao_tarefa = Column(Text, nullable=True)
+    resultado_tecnico = Column(Text, nullable=True)
+    resultado_musical = Column(Text, nullable=True)
+    observacoes = Column(Text, nullable=True)
+    pensamentos_associados = Column(Text, nullable=True)
+    emocoes_associadas = Column(Text, nullable=True)
+    diario_reflexivo = Column(Text, nullable=True)
+    status = Column(String(20), default="em_andamento")
+    capa_url = Column(String(255), nullable=True)
 
-    # Removemos o método __init__
-    
+    # Relacionamento para acesso fácil ao autor
+    autor = relationship("Usuario", backref="ciclos")
+
     def __repr__(self):
         return f"<CicloDeEstudo {self.id}: {self.obra}>"
-
+    # REMOVIDOS: __init__ e to_dict
