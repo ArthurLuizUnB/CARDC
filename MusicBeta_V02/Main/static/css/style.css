@@ -40,15 +40,10 @@ header {
     top: 0;
     width: 100%;
     z-index: 1000;
-}
-
-.header-content {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    max-width: 1200px; 
+    margin: 0 auto;    
+    left: 0;           
+    right: 0;          
 }
 
 .header-left-side {
@@ -522,29 +517,49 @@ h2, h3 {
 @media (max-width: 768px) {
     header {
         flex-direction: column;
-        height: auto;
+        height: auto; /* IMPORTANTE: Altura dinâmica */
         padding: 10px;
+        position: static; /* IMPORTANTE: Tira o cabeçalho do fluxo fixo no mobile */
     }
-    .header-content {
-        flex-direction: column;
-        gap: 10px;
+    
+    body {
+        /* NOVO: Remove o padding superior fixo, pois o header é static */
+        padding-top: 0; 
     }
-    header h1 {
-        margin-bottom: 10px;
-        text-align: center;
-    }
+    
+    .header-left-side,
     .header-right-side {
+        width: 100%;
         flex-direction: column;
         gap: 10px;
+        justify-content: center;
     }
-    .user-info {
-        flex-direction: column;
+    
+    .header-left-side {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+    }
+
+    header nav {
+        display: flex;
+        flex-direction: row;
         gap: 5px;
+        justify-content: center;
     }
+    
+    .user-info {
+        flex-direction: row;
+        gap: 10px;
+        justify-content: center;
+    }
+    
     .user-info span {
         text-align: center;
     }
+
     .container {
         padding: 20px;
+        margin-top: 20px; /* Adiciona margem entre o header e o container principal */
     }
 }

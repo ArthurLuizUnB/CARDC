@@ -27,17 +27,16 @@
             {% endwith %}
 
             <form class="login-form" method="POST" action="{{ url_for('routes.cadastro') }}" enctype="multipart/form-data">
-                <div class="form-group">
-                    <input type="text" id="username" name="username" placeholder="Usuário" required>
-                </div>
-
-                <div class="form-group">
+<div class="form-group">
                     <input type="email" id="email" name="email" placeholder="Email" required>
                 </div>
                 
                 <div class="form-group">
-                    <input type="password" id="password" name="password" placeholder="Senha" required>
+                    <input type="text" id="nome_completo" name="nome_completo" placeholder="Nome Completo" required>
                 </div>
+                
+                <div class="form-group">
+                    <input type="password" id="password" name="password" placeholder="Senha" required>
 
                 <div class="form-group file-input-container">
                     <label for="foto_perfil" class="file-label">

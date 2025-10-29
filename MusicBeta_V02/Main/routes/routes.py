@@ -14,7 +14,15 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         if not AuthController.usuario_logado():
             return redirect(url_for("routes.login"))
+        
+        # NOVO: g.usuario_atual agora armazena o OBJETO Usuario, não o dicionário
         g.usuario_atual = AuthController.usuario_atual()
+        
+        # Garante que, se for um objeto Usuario (SQLAlchemy), ele tenha um ID
+        if not g.usuario_atual or not hasattr(g.usuario_atual, 'id'):
+            # Caso o objeto retornado esteja incompleto ou seja None (imprevisto)
+            return redirect(url_for("routes.logout"))
+            
         return f(*args, **kwargs)
     return decorated_function
 
@@ -44,13 +52,22 @@ def cadastro():
         username = request.form.get("username")
         email = request.form.get("email")
         password = request.form.get("password")
+        # NOVO: Coleta o nome completo do formulário
+        nome_completo = request.form.get("nome_completo") 
         profile_pic_file = request.files.get("foto_perfil")
 
         if AuthController.buscar_por_username(username):
             flash("Nome de usuário já existe. Por favor, escolha outro.", "error")
             return render_template("cadastro.html")
 
-        AuthController.adicionar_usuario(username, email, password, profile_pic_file)
+        # Chama a função atualizada, passando o nome_completo
+        novo_usuario, erro_foto = AuthController.adicionar_usuario(username, email, password, profile_pic_file, nome_completo=nome_completo)
+        
+        # Novo: Trata o erro de upload (Lógica da tarefa 1)
+        if erro_foto:
+            flash(erro_foto, "error")
+            return render_template("cadastro.html")
+
         flash("Cadastro realizado com sucesso! Faça login para continuar.", "success")
         return redirect(url_for("routes.login"))
 
@@ -65,9 +82,10 @@ def logout():
 @routes.route("/")
 @login_required
 def home():
-    ciclos = CicloController.listar_por_usuario(g.usuario_atual["id"])
-    ciclos_em_andamento = [c for c in ciclos if c.get("status") == "em_andamento"]
-    ciclos_finalizados = [c for c in ciclos if c.get("status") == "finalizado"]
+    # NOVO: Acessa o ID do usuário como atributo e filtra a lista de objetos
+    ciclos = CicloController.listar_por_usuario(g.usuario_atual.id)
+    ciclos_em_andamento = [c for c in ciclos if c.status == "em_andamento"]
+    ciclos_finalizados = [c for c in ciclos if c.status == "finalizado"]
     return render_template("home.html", ciclos_em_andamento=ciclos_em_andamento, ciclos_finalizados=ciclos_finalizados)
 
 @routes.route("/ciclo/novo", methods=["GET", "POST"])
@@ -81,7 +99,8 @@ def novo_ciclo():
 
         novo_ciclo = CicloDeEstudo(
             id=str(uuid.uuid4()),
-            id_usuario=g.usuario_atual["id"],
+            # NOVO: Acessa o ID do usuário como atributo
+            id_usuario=g.usuario_atual.id,
             obra=obra,
             compositor=compositor,
             data_inicio=data_inicio,
@@ -97,7 +116,8 @@ def novo_ciclo():
 @login_required
 def editar_ciclo(ciclo_id):
     ciclo = CicloController.buscar_por_id(ciclo_id)
-    if not ciclo or ciclo.id_usuario != g.usuario_atual["id"]:
+    # NOVO: Acessa o ID do usuário como atributo
+    if not ciclo or ciclo.id_usuario != g.usuario_atual.id:
         flash("Ciclo de estudo não encontrado ou você não tem permissão para editá-lo.", "error")
         return redirect(url_for("routes.home"))
 
@@ -128,7 +148,8 @@ def editar_ciclo(ciclo_id):
 @login_required
 def finalizar_ciclo(ciclo_id):
     ciclo = CicloController.buscar_por_id(ciclo_id)
-    if ciclo and ciclo.id_usuario == g.usuario_atual["id"]:
+    # NOVO: Acessa o ID do usuário como atributo
+    if ciclo and ciclo.id_usuario == g.usuario_atual.id:
         ciclo.status = "finalizado"
         CicloController.atualizar(ciclo)
         flash("Ciclo de estudo finalizado!", "success")
@@ -138,7 +159,8 @@ def finalizar_ciclo(ciclo_id):
 @login_required
 def remover_ciclo(ciclo_id):
     ciclo = CicloController.buscar_por_id(ciclo_id)
-    if ciclo and ciclo.id_usuario == g.usuario_atual["id"]:
+    # NOVO: Acessa o ID do usuário como atributo
+    if ciclo and ciclo.id_usuario == g.usuario_atual.id:
         CicloController.remover(ciclo_id)
         flash("Ciclo de estudo removido com sucesso.", "success")
     return redirect(url_for("routes.home"))
@@ -146,12 +168,16 @@ def remover_ciclo(ciclo_id):
 @routes.route("/perfil")
 @login_required
 def perfil():
-    ciclos = CicloController.listar_por_usuario(g.usuario_atual["id"])
-    incompletos = sum(1 for c in ciclos if c.get("status") == "em_andamento")
-    concluidos = sum(1 for c in ciclos if c.get("status") == "finalizado")
+    # NOVO: Acessa o ID do usuário como atributo
+    ciclos = CicloController.listar_por_usuario(g.usuario_atual.id)
+    
+    # NOVO: Filtra usando o atributo 'status' do objeto CicloDeEstudo
+    incompletos = sum(1 for c in ciclos if c.status == "em_andamento")
+    concluidos = sum(1 for c in ciclos if c.status == "finalizado")
     publicados = 0 
     
-    usuario = AuthController.buscar_por_id(g.usuario_atual["id"])
+    # NOVO: g.usuario_atual já é o objeto completo do usuário
+    usuario = g.usuario_atual
     
     return render_template("perfil.html",
                            usuario=usuario, 
@@ -162,8 +188,10 @@ def perfil():
 @routes.route("/perfil/editar", methods=["GET", "POST"])
 @login_required
 def editar_perfil():
-    usuario_id = g.usuario_atual["id"]
-    usuario = AuthController.buscar_por_id(usuario_id)
+    # NOVO: Acessa o ID do usuário como atributo
+    usuario_id = g.usuario_atual.id
+    # usuario = AuthController.buscar_por_id(usuario_id) # Não é mais necessário, já temos o objeto completo em g
+    usuario = g.usuario_atual # Simplifica o código
 
     if request.method == "POST":
         profile_pic_file = request.files.get("foto_perfil")
@@ -173,8 +201,16 @@ def editar_perfil():
         usuario.nome_completo = request.form.get("nome_completo")
         usuario.biografia = request.form.get("biografia")
         
-        AuthController.atualizar_usuario(usuario, profile_pic_file)
+        # Chama a função atualizada que retorna a mensagem de erro ou None em caso de sucesso
+        erro_foto = AuthController.atualizar_usuario(usuario, profile_pic_file)
         
+        # Novo: Trata o erro de upload
+        if erro_foto:
+            flash(erro_foto, "error")
+            # Permanece na página de edição para o usuário corrigir
+            return render_template("form_perfil.html", usuario=usuario)
+
+        # Se o perfil foi atualizado com sucesso (erro_foto é None)
         session['username'] = usuario.username
 
         flash("Perfil atualizado com sucesso!", "success")

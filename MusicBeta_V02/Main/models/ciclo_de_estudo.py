@@ -1,32 +1,34 @@
 import uuid
+from .database_config import db # NOVO: Importa o objeto db
 
-class CicloDeEstudo:
-    def __init__(self, id, id_usuario, obra, compositor, data_inicio, data_finalizacao,
-                 link_gravacao="", consideracoes_preliminares="", acao_artistica="",
-                 descricao_tarefa="", resultado_tecnico="", resultado_musical="",
-                 observacoes="", pensamentos_associados="", emocoes_associadas="",
-                 diario_reflexivo="", status="em_andamento", capa_url=""):
-        self.id = id
-        self.id_usuario = id_usuario
-        self.obra = obra
-        self.compositor = compositor
-        self.data_inicio = data_inicio
-        self.data_finalizacao = data_finalizacao
-        self.link_gravacao = link_gravacao
-        self.consideracoes_preliminares = consideracoes_preliminares
-        self.acao_artistica = acao_artistica
-        self.descricao_tarefa = descricao_tarefa
-        self.resultado_tecnico = resultado_tecnico
-        self.resultado_musical = resultado_musical
-        self.observacoes = observacoes
-        self.pensamentos_associados = pensamentos_associados
-        self.emocoes_associadas = emocoes_associadas
-        self.diario_reflexivo = diario_reflexivo
-        self.status = status
-        self.capa_url = capa_url
+class CicloDeEstudo(db.Model): # NOVO: Herda de db.Model
+    __tablename__ = 'ciclos_de_estudo'
 
+    # Colunas da Tabela
+    id = db.Column(db.String, primary_key=True)
+    
+    # NOVO: Chave Estrangeira. Linka com a tabela 'usuarios'
+    id_usuario = db.Column(db.String, db.ForeignKey('usuarios.id'), nullable=False) 
+    
+    obra = db.Column(db.String(255), nullable=False)
+    compositor = db.Column(db.String(255), nullable=False)
+    data_inicio = db.Column(db.String(10), nullable=False)
+    data_finalizacao = db.Column(db.String(10), nullable=True)
+    link_gravacao = db.Column(db.String(255), nullable=True)
+    consideracoes_preliminares = db.Column(db.Text, nullable=True)
+    acao_artistica = db.Column(db.Text, nullable=True)
+    descricao_tarefa = db.Column(db.Text, nullable=True)
+    resultado_tecnico = db.Column(db.Text, nullable=True)
+    resultado_musical = db.Column(db.Text, nullable=True)
+    observacoes = db.Column(db.Text, nullable=True)
+    pensamentos_associados = db.Column(db.Text, nullable=True)
+    emocoes_associadas = db.Column(db.Text, nullable=True)
+    diario_reflexivo = db.Column(db.Text, nullable=True)
+    status = db.Column(db.String(20), default="em_andamento")
+    capa_url = db.Column(db.String(255), nullable=True)
+
+    # Removemos o método __init__
+    
     def __repr__(self):
         return f"<CicloDeEstudo {self.id}: {self.obra}>"
 
-    def to_dict(self):
-        return self.__dict__

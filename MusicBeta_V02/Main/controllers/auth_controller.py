@@ -1,90 +1,80 @@
-from models.database import Database
+from models.database_config import db 
 from models.usuario import Usuario
 from flask import session
 import uuid
 from helpers.upload_helper import save_profile_picture
+from sqlalchemy import or_  # Adicionado para consultas ORM
+from models.bcrypt_config import bcrypt
 
 class AuthController:
 
     @staticmethod
     def listar_usuarios():
-        db = Database.load()
-        return db.get("usuarios", [])
+        # NOVO: Busca todos os usuários
+        return Usuario.query.all()
 
     @staticmethod
-    def adicionar_usuario(username, email, password, profile_pic_file=None):
-        id_usuario = str(uuid.uuid4())
-        hashed_password = Usuario.hash_password(password)
-        caminho_foto_perfil = None
-        if profile_pic_file:
-            caminho_foto_perfil = save_profile_picture(profile_pic_file)
+    def buscar_por_username(username):
+        # NOVO: Busca o primeiro usuário com o username correspondente
+        return Usuario.query.filter_by(username=username).first()
 
+    @staticmethod
+    def buscar_por_id(id_usuario):
+        # NOVO: Busca o usuário pela chave primária
+        return Usuario.query.get(id_usuario)
+
+    @staticmethod
+    def validar_credenciais(username, password):
+        # NOVO: Busca o usuário pelo username OU email
+        usuario = Usuario.query.filter(
+            or_(Usuario.username == username, Usuario.email == username)
+        ).first()
+
+        if usuario:
+            if bcrypt.check_password_hash(usuario.password, password):
+                return usuario, None
+        
+        return None, "Nome de usuário/email ou senha incorretos."
+        
+    @staticmethod
+    def autenticar(username, password):
+        return AuthController.validar_credenciais(username, password)
+
+ @staticmethod
+    def adicionar_usuario(username, email, password, profile_pic_file=None, nome_completo=None):
+        id_usuario = str(uuid.uuid4())
+        
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        
+        caminho_foto_perfil = None
+        erro_foto = None 
+
+        if profile_pic_file and profile_pic_file.filename != '':
+            caminho_foto_perfil, erro_foto = save_profile_picture(profile_pic_file)
+            
+            if erro_foto:
+                return None, erro_foto 
+        
         novo_usuario = Usuario(
             id=id_usuario,
             username=username,
             password=hashed_password,
             email=email,
-            nome_completo=username,
+            nome_completo=nome_completo or username,
             biografia="",
             is_admin=False,
             caminho_foto_perfil=caminho_foto_perfil
         )
 
-        db = Database.load()
-        if "usuarios" not in db:
-            db["usuarios"] = []
-        db["usuarios"].append(novo_usuario.to_dict())
-        Database.save(db)
-        return novo_usuario
-
-    @staticmethod
-    def buscar_por_username(username):
-        if not username or not isinstance(username, str):
-            return None
-
-        username = username.strip().lower()
-
-        usuarios = AuthController.listar_usuarios()
-        for usuario_data in usuarios:
-            if usuario_data["username"].lower() == username:
-                return Usuario(**usuario_data)
-        return None
-
-    @staticmethod
-    def buscar_por_id(id):
-        if not id or not isinstance(id, str):
-            return None
-
-        usuarios = AuthController.listar_usuarios()
-        for usuario_data in usuarios:
-            if usuario_data["id"] == id:
-                return Usuario(**usuario_data)
-        return None
-
-    @staticmethod
-    def validar_credenciais(username, password):
-        if not username or not password:
-            return False, "Usuário e senha são obrigatórios"
-
-        if len(username.strip()) < 3:
-            return False, "Nome de usuário deve ter pelo menos 3 caracteres"
-
-        if len(password) < 3:
-            return False, "Senha deve ter pelo menos 3 caracteres"
-
-        return True, ""
-
-    @staticmethod
-    def autenticar(username, password):
-        valido, erro = AuthController.validar_credenciais(username, password)
-        if not valido:
-            return None, erro
-
-        usuario = AuthController.buscar_por_username(username)
-        if not usuario or not usuario.check_password(password):
-            return None, "Usuário não encontrado"
-
-        return usuario, None
+        # NOVO: Adiciona o objeto à sessão e salva no banco de dados
+        db.session.add(novo_usuario)
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return None, "Erro ao salvar o novo usuário no banco de dados."
+        
+        return novo_usuario, None
 
     @staticmethod
     def fazer_login(usuario):
@@ -110,21 +100,29 @@ class AuthController:
                 'is_admin': session.get('is_admin', False)
             }
             usuario_completo = AuthController.buscar_por_id(usuario_data['id'])
+            # NOVO: Retorna o objeto completo do usuário (que é a instância de Usuario)
+            # Como a rota/template ainda espera um dict, estamos mantendo o to_dict() por enquanto.
             if usuario_completo:
-                return usuario_completo.to_dict()
+                return usuario_completo
             return usuario_data
         return None
 
     @staticmethod
     def atualizar_usuario(usuario_atualizado, profile_pic_file=None):
-        if profile_pic_file:
-            caminho_foto_perfil = save_profile_picture(profile_pic_file)
+        if profile_pic_file and profile_pic_file.filename != '':
+            caminho_foto_perfil, erro_foto = save_profile_picture(profile_pic_file)
+            
+            if erro_foto:
+                return erro_foto
+            
             if caminho_foto_perfil:
                 usuario_atualizado.caminho_foto_perfil = caminho_foto_perfil
 
-        db = Database.load()
-        for i, u in enumerate(db["usuarios"]):
-            if u["id"] == usuario_atualizado.id:
-                db["usuarios"][i] = usuario_atualizado.to_dict()
-                break
-        Database.save(db)
+        # NOVO: O SQLAlchemy detecta a mudança no objeto e faz o update no commit
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return "Erro ao atualizar o usuário no banco de dados."
+        
+        return None
