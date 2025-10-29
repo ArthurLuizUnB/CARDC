@@ -8,11 +8,9 @@ from models.bcrypt_config import bcrypt
 
 app = Flask(__name__, template_folder="views/html")
 
-# --- BLOCO DE CONFIGURAÇÃO (TODAS AS VARIÁVEIS DEVEM VIR AQUI) ---
+# --- BLOCO DE CONFIGURAÇÃO (ORDEM CORRETA) ---
 app.secret_key = os.environ.get("SECRET_KEY", os.urandom(24)) 
 
-# 1. Configuração do Banco de Dados
-# USA O DRIVER PADRÃO DO PYTHON (SEM PYSQLITE3)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     'DATABASE_URL', 
     'sqlite:///db.sqlite3'
@@ -35,6 +33,5 @@ app.register_blueprint(routes)
 
 if __name__ == "__main__":
     with app.app_context():
-        # Cria as tabelas se elas não existirem
         db.create_all()     
     app.run(host="0.0.0.0", port=5000, debug=True)
