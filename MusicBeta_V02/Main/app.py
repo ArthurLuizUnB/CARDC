@@ -11,18 +11,19 @@ app = Flask(__name__, template_folder="views/html")
 # --- BLOCO DE CONFIGURAÇÃO (TODAS AS VARIÁVEIS DEVEM VIR AQUI) ---
 app.secret_key = os.environ.get("SECRET_KEY", os.urandom(24)) 
 
-# 1. Configuração do Banco de Dados (CRUCIALMENTE PRIMEIRO)
+# 1. Configuração do Banco de Dados
+# USA O DRIVER PADRÃO DO PYTHON (SEM PYSQLITE3)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     'DATABASE_URL', 
     'sqlite:///db.sqlite3'
-).replace('postgres://', 'postgresql://').replace('sqlite:///', 'sqlite+pysqlite:///') # CORRIGIDO: Garante que o driver PySQLite seja usado localmente
+).replace('postgres://', 'postgresql://') 
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = 'static/images/uploads'
 # --- FIM DO BLOCO DE CONFIGURAÇÃO ---
 
 
-# 2. INICIALIZAÇÃO DE EXTENSÕES (DEVE VIR DEPOIS DA CONFIGURAÇÃO)
+# 2. INICIALIZAÇÃO DE EXTENSÕES
 db.init_app(app) 
 bcrypt.init_app(app)
 
