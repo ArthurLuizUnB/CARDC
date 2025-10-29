@@ -3,7 +3,7 @@ from models.usuario import Usuario
 from flask import session
 import uuid
 from helpers.upload_helper import save_profile_picture
-from sqlalchemy import or_  # Adicionado para consultas ORM
+from sqlalchemy import or_ # Adicionado para consultas ORM
 from models.bcrypt_config import bcrypt
 
 class AuthController:
@@ -31,19 +31,21 @@ class AuthController:
         ).first()
 
         if usuario:
+            # NOVO: Verifica a senha usando Bcrypt (comparação segura)
             if bcrypt.check_password_hash(usuario.password, password):
                 return usuario, None
         
         return None, "Nome de usuário/email ou senha incorretos."
-        
+
     @staticmethod
     def autenticar(username, password):
         return AuthController.validar_credenciais(username, password)
-
- @staticmethod
+    
+    @staticmethod
     def adicionar_usuario(username, email, password, profile_pic_file=None, nome_completo=None):
         id_usuario = str(uuid.uuid4())
         
+        # HASH DA SENHA USANDO BCRYPT
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         
         caminho_foto_perfil = None
@@ -100,8 +102,7 @@ class AuthController:
                 'is_admin': session.get('is_admin', False)
             }
             usuario_completo = AuthController.buscar_por_id(usuario_data['id'])
-            # NOVO: Retorna o objeto completo do usuário (que é a instância de Usuario)
-            # Como a rota/template ainda espera um dict, estamos mantendo o to_dict() por enquanto.
+            
             if usuario_completo:
                 return usuario_completo
             return usuario_data
