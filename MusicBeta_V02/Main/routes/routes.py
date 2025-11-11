@@ -95,20 +95,28 @@ def home():
 @login_required
 def novo_ciclo():
     if request.method == "POST":
-        obra = request.form.get("obra")
-        compositor = request.form.get("compositor")
-        data_inicio = request.form.get("data_inicio")
-        data_finalizacao = request.form.get("data_finalizacao")
-
+        
         novo_ciclo = CicloDeEstudo(
             id=str(uuid.uuid4()),
-            # NOVO: Acessa o ID do usuário como atributo
             id_usuario=g.usuario_atual.id,
-            obra=obra,
-            compositor=compositor,
-            data_inicio=data_inicio,
-            data_finalizacao=data_finalizacao
+            obra=request.form.get("obra"),
+            compositor=request.form.get("compositor"),
+            data_inicio=request.form.get("data_inicio"),
+            data_finalizacao=request.form.get("data_finalizacao"),
+            link_gravacao=request.form.get("link_gravacao"),
+            # O campo 'consideracoes_preliminares' existe no modelo mas não no form,
+            # então ele será 'None' por padrão, o que está correto.
+            acao_artistica=request.form.get("acao_artistica"),
+            descricao_tarefa=request.form.get("descricao_tarefa"),
+            resultado_tecnico=request.form.get("resultado_tecnico"),
+            resultado_musical=request.form.get("resultado_musical"),
+            observacoes=request.form.get("observacoes"),
+            pensamentos_associados=request.form.get("pensamentos_associados"),
+            emocoes_associadas=request.form.get("emocoes_associadas"),
+            diario_reflexivo=request.form.get("diario_reflexivo"),
+            status="finalizado" if request.form.get("terminado") else "em_andamento"
         )
+
         CicloController.adicionar(novo_ciclo)
         flash("Novo ciclo de estudo criado com sucesso!", "success")
         return redirect(url_for("routes.editar_ciclo", ciclo_id=novo_ciclo.id))
