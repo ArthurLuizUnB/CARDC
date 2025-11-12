@@ -219,26 +219,11 @@ def editar_ciclo(ciclo_id):
         flash("Ciclo de estudo atualizado com sucesso!", "success")
         # Redireciona de volta para a EDIÇÃO para ver a nova lista de vídeos
         return redirect(url_for("routes.editar_ciclo", ciclo_id=ciclo_id))
-
-    # ==================================================================
-    # || INÍCIO DA MUDANÇA (Linha ~234)
-    # || Esta é a parte que faltava no seu código.
-    # || Quando a página é carregada (GET), precisamos buscar as gravações.
-    # ==================================================================
     
     # Busca a lista de gravações para este ciclo
     gravacoes = GravacaoController.listar_por_ciclo(ciclo_id)
     # Passa a lista para o template
     return render_template("form_ciclo.html", ciclo=ciclo, gravacoes=gravacoes)
-    
-    # ==================================================================
-    # || FIM DA MUDANÇA
-    # ==================================================================
-
-# ==================================================================
-# || O resto das rotas
-# || (Elas estão corretas, não precisam de mudança)
-# ==================================================================
 
 @routes.route("/ciclo/finalizar/<ciclo_id>")
 @login_required
@@ -250,6 +235,33 @@ def finalizar_ciclo(ciclo_id):
         CicloController.atualizar(ciclo)
         flash("Ciclo de estudo finalizado!", "success")
     return redirect(url_for("routes.home"))
+
+@routes.route("/gravacao/remover/<gravacao_id>")
+@login_required
+def remover_gravacao(gravacao_id):
+    # 1. Busca a gravação no banco
+    gravacao = GravacaoController.buscar_por_id(gravacao_id)
+    
+    # 2. Verifica se a gravação existe e se o utilizador logado é o "dono"
+    # (Verificamos se o ID do utilizador no ciclo da gravação é o mesmo do utilizador logado)
+    if not gravacao:
+        flash("Gravação não encontrada.", "error")
+        return redirect(url_for("routes.home"))
+
+    # Guarda o ID do ciclo para onde vamos redirecionar
+    id_ciclo = gravacao.id_ciclo 
+    
+    # Verificação de segurança (Lei 2)
+    if gravacao.ciclo.id_usuario != g.usuario_atual.id:
+        flash("Você não tem permissão para apagar esta gravação.", "error")
+        return redirect(url_for("routes.editar_ciclo", ciclo_id=id_ciclo))
+
+    # 3. Se tudo estiver certo, remove a gravação
+    GravacaoController.remover(gravacao_id)
+    flash("Gravação removida com sucesso!", "success")
+    
+    # 4. Redireciona de volta para a página de edição do ciclo
+    return redirect(url_for("routes.editar_ciclo", ciclo_id=id_ciclo))    
 
 @routes.route("/ciclo/remover/<ciclo_id>")
 @login_required

@@ -47,6 +47,12 @@
                         <p class="recording-date">
                             Enviado em: {{ gravacao.data_envio.strftime('%d/%m/%Y às %H:%M') }}
                         </p>
+
+                        <a href="{{ url_for('routes.remover_gravacao', gravacao_id=gravacao.id) }}" 
+                           class="btn-sm btn-danger btn-delete-video"
+                           onclick="return confirm('Tem a certeza que quer apagar este vídeo? Esta ação não pode ser desfeita.')">
+                           Excluir Vídeo
+                        </a>
                     </li>
                 {% endfor %}
                 </ul>

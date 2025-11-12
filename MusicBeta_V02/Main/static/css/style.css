@@ -643,3 +643,9 @@ h2, h3 {
     margin-top: 10px;
     margin-bottom: 0;
 }
+
+.btn-delete-video {
+    text-decoration: none;
+    display: inline-block; /* Faz o botão respeitar a margem */
+    margin-top: 10px;
+}

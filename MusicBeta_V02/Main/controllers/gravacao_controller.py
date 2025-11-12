@@ -18,6 +18,11 @@ class GravacaoController:
             return False
 
     @staticmethod
+    def buscar_por_id(id_gravacao):
+        """Busca uma gravação única pelo seu ID."""
+        return Session.get(Gravacao, id_gravacao)
+
+    @staticmethod
     def listar_por_ciclo(id_ciclo):
         """Lista todas as gravações de um ciclo, ordenadas pela data de envio."""
         return Session.query(Gravacao).filter_by(id_ciclo=id_ciclo).order_by(Gravacao.data_envio.desc()).all()
