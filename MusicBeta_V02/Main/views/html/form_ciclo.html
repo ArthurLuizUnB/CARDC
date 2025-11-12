@@ -32,7 +32,7 @@
                 <button type="button" id="stopRecordBtn" class="btn btn-action btn-stop" disabled>Parar</button>
             </div>
         </div>
-        {% if ciclo and ciclo.link_gravacao %}
+{% if ciclo and ciclo.link_gravacao %}
             <div class="video-preview">
                 <p>Gravação atual:</p>
                 <video width="100%" controls>
@@ -42,6 +42,8 @@
             </div>
         {% endif %}
 
+        <label for="consideracoes_preliminares">Considerações preliminares:</label>
+        <textarea id="consideracoes_preliminares" name="consideracoes_preliminares" rows="3">{{ ciclo.consideracoes_preliminares or '' }}</textarea>
         <h3 class="mt-4">2º Passo</h3>
         <label for="acao_artistica">Ação artística:</label>
         <textarea id="acao_artistica" name="acao_artistica" rows="3">{{ ciclo.acao_artistica or '' }}</textarea>
