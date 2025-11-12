@@ -54,7 +54,7 @@ class AuthController:
 
         return None, "Nome de usuário/email ou senha incorretos."
 
-@staticmethod
+    @staticmethod
     def adicionar_usuario(username, email, password, profile_pic_file=None, nome_completo=None):
         id_usuario = str(uuid.uuid4())
         
