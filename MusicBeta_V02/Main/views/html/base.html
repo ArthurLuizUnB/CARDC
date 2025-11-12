@@ -25,7 +25,7 @@
             <div class="header-right-side">
                 <div class="user-info">
                     {% if g.usuario_atual.caminho_foto_perfil %}
-                        <img src="{{ url_for('static', filename=g.usuario_atual.caminho_foto_perfil) }}" alt="Foto de Perfil" class="header-profile-pic">
+                        <img src="{{ g.usuario_atual.caminho_foto_perfil }}" alt="Foto de Perfil" class="header-profile-pic">
                     {% else %}
                         <img src="{{ url_for('static', filename='images/default_profile_pic.png') }}" alt="Foto de Perfil" class="header-profile-pic">
                     {% endif %}

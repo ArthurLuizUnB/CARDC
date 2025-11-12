@@ -44,29 +44,29 @@
 
         <h3 class="mt-4">2º Passo</h3>
         <label for="acao_artistica">Ação artística:</label>
-        <textarea id="acao_artistica" name="acao_artistica" rows="3">{{ ciclo.acao_artistica if ciclo else '' }}</textarea>
+        <textarea id="acao_artistica" name="acao_artistica" rows="3">{{ ciclo.acao_artistica or '' }}</textarea>
 
         <label for="descricao_tarefa">Descrição da tarefa:</label>
-        <textarea id="descricao_tarefa" name="descricao_tarefa" rows="3">{{ ciclo.descricao_tarefa if ciclo else '' }}</textarea>
+        <textarea id="descricao_tarefa" name="descricao_tarefa" rows="3">{{ ciclo.descricao_tarefa or '' }}</textarea>
 
         <label for="resultado_tecnico">Resultado técnico:</label>
-        <textarea id="resultado_tecnico" name="resultado_tecnico" rows="3">{{ ciclo.resultado_tecnico if ciclo else '' }}</textarea>
+        <textarea id="resultado_tecnico" name="resultado_tecnico" rows="3">{{ ciclo.resultado_tecnico or '' }}</textarea>
 
         <label for="resultado_musical">Resultado musical:</label>
-        <textarea id="resultado_musical" name="resultado_musical" rows="3">{{ ciclo.resultado_musical if ciclo else '' }}</textarea>
+        <textarea id="resultado_musical" name="resultado_musical" rows="3">{{ ciclo.resultado_musical or '' }}</textarea>
 
         <h3 class="mt-4">3º Passo</h3>
         <label for="observacoes">Observações:</label>
-        <textarea id="observacoes" name="observacoes" rows="3">{{ ciclo.observacoes if ciclo else '' }}</textarea>
+        <textarea id="observacoes" name="observacoes" rows="3">{{ ciclo.observacoes or '' }}</textarea>
 
         <label for="pensamentos_associados">Pensamentos associados:</label>
-        <textarea id="pensamentos_associados" name="pensamentos_associados" rows="3">{{ ciclo.pensamentos_associados if ciclo else '' }}</textarea>
+        <textarea id="pensamentos_associados" name="pensamentos_associados" rows="3">{{ ciclo.pensamentos_associados or '' }}</textarea>
 
         <label for="emocoes_associadas">Emoções associadas:</label>
-        <textarea id="emocoes_associadas" name="emocoes_associadas" rows="3">{{ ciclo.emocoes_associadas if ciclo else '' }}</textarea>
+        <textarea id="emocoes_associadas" name="emocoes_associadas" rows="3">{{ ciclo.emocoes_associadas or '' }}</textarea>
 
         <label for="diario_reflexivo">Diário reflexivo:</label>
-        <textarea id="diario_reflexivo" name="diario_reflexivo" rows="5">{{ ciclo.diario_reflexivo if ciclo else '' }}</textarea>
+        <textarea id="diario_reflexivo" name="diario_reflexivo" rows="5">{{ ciclo.diario_reflexivo or '' }}</textarea>
 
         <div class="form-group checkbox-group">
             <label for="terminado">Finalizar ciclo</label>

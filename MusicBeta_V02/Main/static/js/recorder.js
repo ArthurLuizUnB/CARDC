@@ -56,6 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 videoPreview.srcObject = null;
                 
                 // Atualiza a interface
+                startRecordBtn.classList.remove("is-recording");
                 startRecordBtn.disabled = false;
                 stopRecordBtn.disabled = true;
                 alert("Gravação finalizada! Clique em 'Salvar' no final do formulário para enviar.");
@@ -70,6 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Inicia a gravação e atualiza a interface
             mediaRecorder.start();
+            startRecordBtn.classList.add("is-recording");
             startRecordBtn.disabled = true;
             stopRecordBtn.disabled = false;
 

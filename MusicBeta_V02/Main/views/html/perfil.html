@@ -7,7 +7,7 @@
         <div class="profile-header">
             <div class="profile-image-container">
                 {% if usuario.caminho_foto_perfil %}
-                    <img src="{{ url_for('static', filename=usuario.caminho_foto_perfil) }}" alt="Foto de Perfil" class="profile-image">
+                    <img src="{{ usuario.caminho_foto_perfil }}" alt="Foto de Perfil" class="profile-image">
                 {% else %}
                     <div class="profile-image-placeholder">
                         <img src="{{ url_for('static', filename='images/default_profile_pic.png') }}" alt="Foto de Perfil Padrão">
