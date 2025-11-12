@@ -5,7 +5,7 @@
 {% block content %}
     <h2>{{ '✏️ Editando: ' + ciclo.obra if ciclo else '➕ Novo Ciclo de Estudo' }}</h2>
 
-    <form action="{{ url_for('routes.novo_ciclo') if not ciclo else url_for('routes.editar_ciclo', ciclo_id=ciclo.id) }}" method="POST" class="formulario">
+    <form action="{{ url_for('routes.novo_ciclo') if not ciclo else url_for('routes.editar_ciclo', ciclo_id=ciclo.id) }}" method="POST" class="formulario" enctype="multipart/form-data">
 
         <h3>1º Passo</h3>
         <label for="obra">Obra:</label>
@@ -17,11 +17,30 @@
         <label for="data_inicio">Início:</label>
         <input type="date" id="data_inicio" name="data_inicio" required value="{{ ciclo.data_inicio if ciclo else now.strftime('%Y-%m-%d') }}">
 
-        <label for="data_finalizacao">Finalização:</label>
+<label for="data_finalizacao">Finalização:</label>
         <input type="date" id="data_finalizacao" name="data_finalizacao" value="{{ ciclo.data_finalizacao if ciclo else '' }}">
 
-        <label for="link_gravacao">Link da gravação:</label>
-        <input type="text" id="link_gravacao" name="link_gravacao" value="{{ ciclo.link_gravacao if ciclo else '' }}">
+        <label for="video_upload">Adicionar Gravação (Galeria):</label>
+        <input type="file" id="video_upload" name="video_upload" accept="video/*">
+        
+        <div class="recorder-container">
+            <label>Ou Gravar agora (Webcam):</label>
+            <video id="videoPreview" width="100%" autoplay muted style="display: none;"></video>
+            
+            <div class="recorder-actions">
+                <button type="button" id="startRecordBtn" class="btn btn-action btn-record">Gravar</button>
+                <button type="button" id="stopRecordBtn" class="btn btn-action btn-stop" disabled>Parar</button>
+            </div>
+        </div>
+        {% if ciclo and ciclo.link_gravacao %}
+            <div class="video-preview">
+                <p>Gravação atual:</p>
+                <video width="100%" controls>
+                    <source src="{{ ciclo.link_gravacao }}" type="video/mp4">
+                    Seu navegador não suporta vídeos. <a href="{{ ciclo.link_gravacao }}">Baixe aqui</a>.
+                </video>
+            </div>
+        {% endif %}
 
         <h3 class="mt-4">2º Passo</h3>
         <label for="acao_artistica">Ação artística:</label>
@@ -59,4 +78,7 @@
             <button type="submit" class="btn btn-action">Salvar</button>
         </div>
     </form>
+
+    <script src="{{ url_for('static', filename='js/recorder.js') }}"></script>
+
 {% endblock %}

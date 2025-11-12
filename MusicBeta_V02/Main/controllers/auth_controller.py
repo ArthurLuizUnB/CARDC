@@ -1,10 +1,10 @@
-from models.database_config import Session # NOVO: Importa a Session pura do SQLAlchemy
+from models.database_config import Session 
 from models.usuario import Usuario
 from flask import session
 import uuid
-from helpers.upload_helper import save_profile_picture
-from sqlalchemy import or_ # Adicionado para consultas ORM
-from models.bcrypt_config import bcrypt # Assumindo que este arquivo existe
+from helpers.media_upload_helper import upload_image # Sua nova importação (Correto)
+from sqlalchemy import or_ 
+from models.bcrypt_config import bcrypt 
 
 class AuthController:
 
@@ -54,18 +54,18 @@ class AuthController:
 
         return None, "Nome de usuário/email ou senha incorretos."
 
-    @staticmethod
+@staticmethod
     def adicionar_usuario(username, email, password, profile_pic_file=None, nome_completo=None):
         id_usuario = str(uuid.uuid4())
         
-        # HASH DA SENHA USANDO BCRYPT
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         
         caminho_foto_perfil = None
         erro_foto = None 
 
         if profile_pic_file and profile_pic_file.filename != '':
-            caminho_foto_perfil, erro_foto = save_profile_picture(profile_pic_file)
+            # MUDANÇA: Usar o novo helper que envia para o Cloudinary
+            caminho_foto_perfil, erro_foto = upload_image(profile_pic_file)
             
             if erro_foto:
                 return None, erro_foto 
@@ -78,10 +78,9 @@ class AuthController:
             nome_completo=nome_completo or username,
             biografia="",
             is_admin=False,
-            caminho_foto_perfil=caminho_foto_perfil
+            caminho_foto_perfil=caminho_foto_perfil # Salva a URL do Cloudinary
         )
 
-        # NOVO: Adiciona o objeto à sessão Pura e salva
         Session.add(novo_usuario)
         try:
             Session.commit()
@@ -128,15 +127,15 @@ class AuthController:
     @staticmethod
     def atualizar_usuario(usuario_atualizado, profile_pic_file=None):
         if profile_pic_file and profile_pic_file.filename != '':
-            caminho_foto_perfil, erro_foto = save_profile_picture(profile_pic_file)
+            # MUDANÇA: Usar o novo helper que envia para o Cloudinary
+            caminho_foto_perfil, erro_foto = upload_image(profile_pic_file)
             
             if erro_foto:
                 return erro_foto
             
             if caminho_foto_perfil:
-                usuario_atualizado.caminho_foto_perfil = caminho_foto_perfil
+                usuario_atualizado.caminho_foto_perfil = caminho_foto_perfil # Salva a URL do Cloudinary
 
-        # NOVO: O SQLAlchemy detecta a mudança no objeto e faz o update no commit
         try:
             Session.commit()
         except Exception as e:

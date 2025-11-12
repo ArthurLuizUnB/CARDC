@@ -7,8 +7,10 @@ import uuid
 from datetime import datetime
 from functools import wraps
 
-routes = Blueprint("routes", __name__)
+# NOVO: Importar o novo helper de upload de vídeo
+from helpers.media_upload_helper import upload_video 
 
+routes = Blueprint("routes", __name__)
 # routes/routes.py
 
 def login_required(f):
@@ -96,6 +98,19 @@ def home():
 def novo_ciclo():
     if request.method == "POST":
         
+        video_url = None # Inicializa a URL do vídeo
+        
+        # 1. Processa o upload do vídeo PRIMEIRO
+        video_file = request.files.get("video_upload")
+        if video_file and video_file.filename != '':
+            video_url, erro_video = upload_video(video_file)
+            
+            if erro_video:
+                flash(f"Erro ao salvar o vídeo: {erro_video}", "error")
+                # Retorna ao formulário para o usuário tentar novamente
+                return render_template("form_ciclo.html") 
+
+        # 2. Cria o objeto CicloDeEstudo com a URL do vídeo (se houver)
         novo_ciclo = CicloDeEstudo(
             id=str(uuid.uuid4()),
             id_usuario=g.usuario_atual.id,
@@ -103,9 +118,10 @@ def novo_ciclo():
             compositor=request.form.get("compositor"),
             data_inicio=request.form.get("data_inicio"),
             data_finalizacao=request.form.get("data_finalizacao"),
-            link_gravacao=request.form.get("link_gravacao"),
-            # O campo 'consideracoes_preliminares' existe no modelo mas não no form,
-            # então ele será 'None' por padrão, o que está correto.
+            
+            # USA A NOVA URL DO VÍDEO
+            link_gravacao=video_url, 
+            
             acao_artistica=request.form.get("acao_artistica"),
             descricao_tarefa=request.form.get("descricao_tarefa"),
             resultado_tecnico=request.form.get("resultado_tecnico"),
@@ -123,29 +139,42 @@ def novo_ciclo():
 
     return render_template("form_ciclo.html")
 
+
 @routes.route("/ciclo/editar/<ciclo_id>", methods=["GET", "POST"])
 @login_required
 def editar_ciclo(ciclo_id):
     ciclo = CicloController.buscar_por_id(ciclo_id)
-    # NOVO: Acessa o ID do usuário como atributo
     if not ciclo or ciclo.id_usuario != g.usuario_atual.id:
-        flash("Ciclo de estudo não encontrado ou você não tem permissão para editá-lo.", "error")
+        flash("Ciclo de estudo não encontrado...", "error")
         return redirect(url_for("routes.home"))
 
     if request.method == "POST":
+        
+        # 1. Processa o upload de um NOVO vídeo (se um foi enviado)
+        video_file = request.files.get("video_upload")
+        if video_file and video_file.filename != '':
+            video_url, erro_video = upload_video(video_file)
+            
+            if erro_video:
+                flash(f"Erro ao salvar o vídeo: {erro_video}", "error")
+                return render_template("form_ciclo.html", ciclo=ciclo)
+            
+            # Se o upload foi bem-sucedido, atualiza o link
+            if video_url:
+                ciclo.link_gravacao = video_url
+        
+        # 2. Atualiza os outros campos
         ciclo.obra = request.form.get("obra")
         ciclo.compositor = request.form.get("compositor")
         ciclo.data_inicio = request.form.get("data_inicio")
         ciclo.data_finalizacao = request.form.get("data_finalizacao")
-        ciclo.link_gravacao = request.form.get("link_gravacao")
+        
+        # O campo 'link_gravacao' (texto) não existe mais no form,
+        # então removemos a linha: ciclo.link_gravacao = request.form.get("link_gravacao")
+        
         ciclo.consideracoes_preliminares = request.form.get("consideracoes_preliminares")
         ciclo.acao_artistica = request.form.get("acao_artistica")
-        ciclo.descricao_tarefa = request.form.get("descricao_tarefa")
-        ciclo.resultado_tecnico = request.form.get("resultado_tecnico")
-        ciclo.resultado_musical = request.form.get("resultado_musical")
-        ciclo.observacoes = request.form.get("observacoes")
-        ciclo.pensamentos_associados = request.form.get("pensamentos_associados")
-        ciclo.emocoes_associadas = request.form.get("emocoes_associadas")
+        # ... (resto dos campos) ...
         ciclo.diario_reflexivo = request.form.get("diario_reflexivo")
         ciclo.status = "finalizado" if request.form.get("terminado") else "em_andamento"
         
