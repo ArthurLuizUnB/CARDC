@@ -7,7 +7,7 @@ from models.bcrypt_config import bcrypt
 from models.database_config import Base, Session 
 from sqlalchemy import create_engine
 import atexit 
-from models import usuario, ciclo_de_estudo # Importar modelos aqui para que Base os conheça
+from models import usuario, ciclo_de_estudo, gravacao
 
 app = Flask(__name__, template_folder="views/html")
 

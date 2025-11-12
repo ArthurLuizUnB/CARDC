@@ -18,7 +18,6 @@ class CicloDeEstudo(Base):
     compositor = Column(String(255), nullable=False)
     data_inicio = Column(String(10), nullable=False)
     data_finalizacao = Column(String(10), nullable=True)
-    link_gravacao = Column(String(255), nullable=True)
     consideracoes_preliminares = Column(Text, nullable=True)
     acao_artistica = Column(Text, nullable=True)
     descricao_tarefa = Column(Text, nullable=True)
@@ -33,6 +32,13 @@ class CicloDeEstudo(Base):
 
     # Relacionamento para acesso fácil ao autor
     autor = relationship("Usuario", backref="ciclos")
+    
+    gravacoes = relationship(
+        "Gravacao", 
+        back_populates="ciclo", 
+        cascade="all, delete-orphan",
+        order_by="Gravacao.data_envio" # Ordena por data (seu pedido)
+    )
 
     def __repr__(self):
         return f"<CicloDeEstudo {self.id}: {self.obra}>"

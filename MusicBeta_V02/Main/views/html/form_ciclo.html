@@ -32,15 +32,28 @@
                 <button type="button" id="stopRecordBtn" class="btn btn-action btn-stop" disabled>Parar</button>
             </div>
         </div>
-{% if ciclo and ciclo.link_gravacao %}
-            <div class="video-preview">
-                <p>Gravação atual:</p>
-                <video width="100%" controls>
-                    <source src="{{ ciclo.link_gravacao }}" type="video/mp4">
-                    Seu navegador não suporta vídeos. <a href="{{ ciclo.link_gravacao }}">Baixe aqui</a>.
-                </video>
-            </div>
-        {% endif %}
+
+        <div class="gallery-container">
+            <h3>Gravações Salvas</h3>
+            {% if gravacoes %}
+                <ul class="recording-list">
+                {% for gravacao in gravacoes %}
+                    <li class="recording-item">
+                        <video width="100%" controls>
+                            <source src="{{ gravacao.url_video }}" type="video/webm">
+                            <source src="{{ gravacao.url_video }}" type="video/mp4">
+                            Seu navegador não suporta vídeos.
+                        </video>
+                        <p class="recording-date">
+                            Enviado em: {{ gravacao.data_envio.strftime('%d/%m/%Y às %H:%M') }}
+                        </p>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p class="no-items">Nenhuma gravação enviada para este ciclo ainda.</p>
+            {% endif %}
+        </div>
 
         <label for="consideracoes_preliminares">Considerações preliminares:</label>
         <textarea id="consideracoes_preliminares" name="consideracoes_preliminares" rows="3">{{ ciclo.consideracoes_preliminares or '' }}</textarea>

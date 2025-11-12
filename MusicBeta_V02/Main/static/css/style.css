@@ -614,3 +614,32 @@ h2, h3 {
 .btn-record.is-recording:hover {
     background-color: #27ae60;
 }
+
+.gallery-container {
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+.gallery-container h3 {
+    border-bottom: 2px solid var(--color-primary-light);
+    padding-bottom: 10px;
+}
+.recording-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.recording-item {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 15px;
+    background: #fdfdfd;
+}
+.recording-date {
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+    text-align: right;
+    margin-top: 10px;
+    margin-bottom: 0;
+}

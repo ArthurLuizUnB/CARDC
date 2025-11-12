@@ -1,12 +1,39 @@
 # MusicBeta_V02/Main/tests/conftest.py
-import pytest
-from MusicBeta_V02.Main.app import app as flask_app
-from MusicBeta_V02.Main.models.database_config import Session, Base
-from sqlalchemy import create_engine
+import sys
 import os
+
+# ==================================================================
+# || INÍCIO DA MUDANÇA (Correção do ImportError)
+# ==================================================================
+# Pega o caminho do diretório 'tests' (onde este arquivo está)
+current_dir = os.path.dirname(os.path.abspath(__file__))
+# Pega o caminho do diretório 'Main' (um nível acima)
+main_dir = os.path.dirname(current_dir)
+
+# Adiciona o diretório 'Main' ao path do Python
+# Esta é a pasta que contém app.py, routes/, models/, etc.
+sys.path.insert(0, main_dir)
+# ==================================================================
+# || FIM DA MUDANÇA (sys.path)
+# ==================================================================
+
+import pytest
+
+# ==================================================================
+# || INÍCIO DA MUDANÇA (Imports)
+# ==================================================================
+# Como 'Main' é a nossa raiz agora, importamos diretamente
+from app import app as flask_app
+from models.database_config import Session, Base
+# ==================================================================
+# || FIM DA MUDANÇA (Imports)
+# ==================================================================
+
+from sqlalchemy import create_engine
 
 @pytest.fixture(scope='session')
 def app():
+# ... (o resto do ficheiro permanece igual)
     """Configura o app Flask para testes com um BD em memória."""
     
     # Força o uso de um banco de dados SQLite em memória para testes
