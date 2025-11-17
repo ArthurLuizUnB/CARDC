@@ -161,7 +161,7 @@ def novo_ciclo():
         flash("Novo ciclo de estudo criado com sucesso!", "success")
         return redirect(url_for("routes.editar_ciclo", ciclo_id=novo_ciclo.id))
 
-    return render_template("form_ciclo.html")
+    return render_template("form_ciclo.html", gravacoes=[])
 
 # ==================================================================
 # || Rota /ciclo/editar/
