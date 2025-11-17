@@ -1,1 +1,1 @@
-web: python MusicBeta_V02/Main/init_db_script.py && gunicorn MusicBeta_V02.Main.app:app
+web: python MusicBeta_V02/Main/init_db_script.py && gunicorn --timeout 120 MusicBeta_V02.Main.app:app
