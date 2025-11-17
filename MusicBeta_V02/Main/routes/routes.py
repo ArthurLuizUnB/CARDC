@@ -161,7 +161,7 @@ def novo_ciclo():
         flash("Novo ciclo de estudo criado com sucesso!", "success")
         return redirect(url_for("routes.editar_ciclo", ciclo_id=novo_ciclo.id))
 
-    return render_template("form_ciclo.html", gravacoes=[])
+    return render_template("form_ciclo.html", gravacoes=[], ciclo=None)
 
 # ==================================================================
 # || Rota /ciclo/editar/
@@ -281,7 +281,7 @@ def perfil():
     
     # NOVO: Filtra usando o atributo 'status' do objeto CicloDeEstudo
     incompletos = sum(1 for c in ciclos if c.status == "em_andamento")
-    concluidos = sum(1 for c in ciclos if c.V)
+    concluidos = sum(1 for c in ciclos if c.status == "finalizado")
     publicados = 0 
     
     # NOVO: g.usuario_atual já é o objeto completo do usuário
