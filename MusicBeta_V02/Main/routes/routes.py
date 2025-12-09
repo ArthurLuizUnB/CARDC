@@ -91,6 +91,47 @@ def logout():
     flash("Sessão encerrada com sucesso.", "info")
     return redirect(url_for("routes.login"))
 
+@routes.route("/esqueci-senha", methods=["GET", "POST"])
+def esqueci_senha():
+    if AuthController.usuario_logado():
+        return redirect(url_for("routes.home"))
+
+    if request.method == "POST":
+        email = request.form.get("email")
+        enviado, mensagem = AuthController.solicitar_recuperacao_senha(email)
+        
+        if enviado:
+            flash("Verifique seu e-mail para redefinir a senha.", "success")
+            return redirect(url_for("routes.login"))
+        else:
+            # Exibe mensagem (mesmo que seja genérica para segurança)
+            flash(mensagem, "info") 
+            
+    return render_template("esqueci_senha.html")
+
+@routes.route("/resetar-senha/<token>", methods=["GET", "POST"])
+def resetar_senha(token):
+    if AuthController.usuario_logado():
+        return redirect(url_for("routes.home"))
+
+    # Verifica se o token é válido antes de mostrar o formulário
+    email = AuthController.validar_token_recuperacao(token)
+    if not email:
+        flash("O link de recuperação é inválido ou expirou.", "error")
+        return redirect(url_for("routes.esqueci_senha"))
+
+    if request.method == "POST":
+        nova_senha = request.form.get("password")
+        sucesso, erro = AuthController.resetar_senha_por_token(token, nova_senha)
+        
+        if sucesso:
+            flash("Sua senha foi atualizada! Faça login agora.", "success")
+            return redirect(url_for("routes.login"))
+        else:
+            flash(erro, "error")
+
+    return render_template("resetar_senha.html", token=token)    
+
 @routes.route("/")
 @login_required
 def home():

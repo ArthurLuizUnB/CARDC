@@ -649,3 +649,16 @@ h2, h3 {
     display: inline-block; /* Faz o botão respeitar a margem */
     margin-top: 10px;
 }
+
+.link-esqueci-senha {
+    display: block;
+    margin: 15px 0;
+    color: var(--color-text-light); /* Usa a variável que você já tem */
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.link-esqueci-senha:hover {
+    color: var(--color-primary); /* Fica laranja ao passar o mouse */
+}

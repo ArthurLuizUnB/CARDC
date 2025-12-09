@@ -5,6 +5,10 @@ import uuid
 from helpers.media_upload_helper import upload_image # Sua nova importação (Correto)
 from sqlalchemy import or_ 
 from models.bcrypt_config import bcrypt 
+from flask import current_app, url_for, render_template_string
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
+from flask_mail import Message
+from helpers.mail_config import mail
 
 class AuthController:
 
@@ -123,6 +127,76 @@ class AuthController:
                 'is_admin': session.get('is_admin', False)
             }
         return None
+
+    @staticmethod
+    def solicitar_recuperacao_senha(email):
+        """
+        Gera um token e envia um e-mail se o usuário existir.
+        Retorna (True, None) se enviado, ou (False, msg) se erro/não encontrado.
+        """
+        # Busca usuário por e-mail (precisamos garantir que busca por email, não username)
+        usuario = Session.query(Usuario).filter_by(email=email).first()
+        
+        if not usuario:
+            # Por segurança, não informamos explicitamente que o e-mail não existe
+            return False, "Se este e-mail estiver cadastrado, você receberá um link."
+
+        # Gera o token seguro (válido por tempo limitado)
+        s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+        token = s.dumps(usuario.email, salt='recuperacao-senha')
+
+        # Cria o link de recuperação
+        link = url_for('routes.resetar_senha', token=token, _external=True)
+
+        # Envia o e-mail
+        msg = Message('Recuperação de Senha - MUSIC', recipients=[usuario.email])
+        # Usamos um template simples aqui, mas você pode criar um HTML bonito em views/
+        msg.body = f"Olá, {usuario.username}.\n\nPara redefinir sua senha, clique no link abaixo:\n{link}\n\nO link expira em 30 minutos.\nSe você não solicitou isso, ignore este e-mail."
+        
+        try:
+            mail.send(msg)
+            return True, None
+        except Exception as e:
+            print(f"Erro ao enviar email: {e}")
+            return False, "Erro ao enviar o e-mail. Tente novamente mais tarde."
+
+    @staticmethod
+    def validar_token_recuperacao(token):
+        """
+        Valida o token e retorna o email do usuário se válido.
+        Retorna None se inválido ou expirado.
+        """
+        s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+        try:
+            # Token expira em 30 minutos (1800 segundos)
+            email = s.loads(token, salt='recuperacao-senha', max_age=1800)
+            return email
+        except (SignatureExpired, BadSignature):
+            return None
+
+    @staticmethod
+    def resetar_senha_por_token(token, nova_senha):
+        """
+        Reseta a senha baseada no token validado.
+        """
+        email = AuthController.validar_token_recuperacao(token)
+        if not email:
+            return False, "O link de recuperação é inválido ou expirou."
+
+        usuario = Session.query(Usuario).filter_by(email=email).first()
+        if not usuario:
+            return False, "Usuário não encontrado."
+
+        # Gera o hash da nova senha
+        hashed_password = bcrypt.generate_password_hash(nova_senha).decode('utf-8')
+        usuario.password = hashed_password
+
+        try:
+            Session.commit()
+            return True, None
+        except Exception as e:
+            Session.rollback()
+            return False, "Erro ao salvar a nova senha no banco de dados."        
 
     @staticmethod
     def atualizar_usuario(usuario_atualizado, profile_pic_file=None):

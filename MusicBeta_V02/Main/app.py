@@ -8,6 +8,7 @@ from models.database_config import Base, Session
 from sqlalchemy import create_engine
 import atexit 
 from models import usuario, ciclo_de_estudo, gravacao
+from helpers.mail_config import mail
 
 app = Flask(__name__, template_folder="views/html")
 
@@ -32,6 +33,18 @@ Base.metadata.bind = engine
 # FUNÇÃO DE CRIAÇÃO DE TABELAS (para ser chamada externamente)
 def init_db():
     Base.metadata.create_all(bind=engine)
+
+# O Render vai fornecer esses valores via variáveis de ambiente
+app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
+app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
+app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'true').lower() in ['true', 'on', '1']
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME')
+
+# 2. INICIALIZAÇÃO DE EXTENSÕES
+bcrypt.init_app(app)
+mail.init_app(app) # NOVO: Inicializa o Mail    
 
 # FECHA A SESSÃO APÓS CADA REQUEST (TEARDOWN)
 @app.teardown_appcontext
