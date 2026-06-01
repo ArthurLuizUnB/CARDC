@@ -18,7 +18,7 @@
 * Framework Web: [Flask](https://flask.palletsprojects.com/en/stable/)
 * Banco de Dados: PostgreSQL (Produção) / SQLite (Desenvolvimento/Testes)
 * Servidor WSGI: Gunicorn
-* Armazenamento de Mídia:[Cloudinary](https://cloudinary.com/)
+* Armazenamento de Mídia: [Cloudinary](https://cloudinary.com/)
 * Segurança: Flask-Bcrypt e URLSafeTimedSerializer
 * Testes: Pytest e Pytest-Mock
 
