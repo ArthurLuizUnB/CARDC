@@ -1,5 +1,5 @@
 # Ciclo Artístico-Reflexivo de Dupla Checagem
-> “Acredita-se que a Prática Artística como metodologia possa colaborar na validação de procedimentos práticos aplicados ao estudo instrumental.” - Leonardo Vieira Feichas
+> “Acredita-se que o Ciclo Artístico-Reflexivo de Dupla Checagem (CARDC) possa contribuir para a legitimação e validação da Prática Artística como Pesquisa, ao promover um movimento contínuo de criação, reflexão e reavaliação crítica do processo artístico, fortalecendo a produção de conhecimento a partir da prática do artista-pesquisador no contexto acadêmico.” Leonardo Vieira Feichas
 
 #### O **CARDC** é uma plataforma web desenvolvida com a aplicação de uma ferramenta teórico-metodológica replicável específica para a construção de uma interpretação musical por estímulo autor reflexivo e autor regulatório.
 #### Baseado na pesquisa do Dr. Leonardo Feichas, este projeto foi desenvolvido como parte de atividades acadêmicas na Universidade de Brasília (UnB), campus Gama (FGA), em colaboração com o Instituto Tecnológico de Aeronáutica (ITA).
