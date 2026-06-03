@@ -73,6 +73,6 @@ Para rodar os testes:
 `pytest`
 
 ### Autoria e Agradecimentos
-* Desenvolvimento de Software: Arthur Luiz
-* Metodologia e Orientação: Leonardo Vieira Feichas e Carlos Henrique
+* Desenvolvimento de Software: Arthur Luiz Silva Guedes
+* Metodologia e Orientação: Leonardo Vieira Feichas e Carlos Henrique Costa Ribeiro
 * Instituições: Universidade de Brasília (UnB) e Instituto Tecnológico de Aeronáutica (ITA)
