@@ -3,7 +3,7 @@
 {% block title %}Novo Ciclo de Estudo{% endblock %}
 
 {% block content %}
-    <h2>{{ '✏️ Editando: ' + ciclo.obra if ciclo else '➕ Novo Ciclo de Estudo' }}</h2>
+    <h2>{{ ' Editando: ' + ciclo.obra if ciclo else ' Novo Ciclo de Estudo' }}</h2>
 
     <form action="{{ url_for('routes.novo_ciclo') if not ciclo else url_for('routes.editar_ciclo', ciclo_id=ciclo.id) }}" method="POST" class="formulario" enctype="multipart/form-data">
 
@@ -80,21 +80,21 @@
         <div class="label-com-ajuda">
             <label for="descricao_tarefa">Descrição da tarefa:</label>
             <button type="button" class="btn-ajuda" aria-label="Ajuda: Descrição da tarefa"
-                data-tooltip="Detalhe a tarefa específica que foi trabalhada nesta sessão de estudo. Este campo será preenchido com os textos explicativos da metodologia CARDC em breve.">?</button>
+                data-tooltip="Descrever de maneira geral o que vai experimentar, observar. Ex: Escolha dedilhados e suas possibilidades.">?</button>
         </div>
         <textarea id="descricao_tarefa" name="descricao_tarefa" rows="3">{{ ciclo.descricao_tarefa or '' }}</textarea>
  
         <div class="label-com-ajuda">
             <label for="resultado_tecnico">Resultado técnico:</label>
             <button type="button" class="btn-ajuda" aria-label="Ajuda: Resultado técnico"
-                data-tooltip="Avalie os aspectos técnicos alcançados durante a prática. Este campo será preenchido com os textos explicativos da metodologia CARDC em breve.">?</button>
+                data-tooltip="Busca-se observar de maneira geral as principais observações e resultados/tópicos referentes à técnica instrumental, sem um aprofundamento na discussão.">?</button>
         </div>
         <textarea id="resultado_tecnico" name="resultado_tecnico" rows="3">{{ ciclo.resultado_tecnico or '' }}</textarea>
  
         <div class="label-com-ajuda">
             <label for="resultado_musical">Resultado musical:</label>
             <button type="button" class="btn-ajuda" aria-label="Ajuda: Resultado musical"
-                data-tooltip="Avalie os aspectos musicais e expressivos alcançados durante a prática. Este campo será preenchido com os textos explicativos da metodologia CARDC em breve.">?</button>
+                data-tooltip="Nesse item observa-se as principais características musicais (tópicos), de estilo, idiomática,">?</button>
         </div>
         <textarea id="resultado_musical" name="resultado_musical" rows="3">{{ ciclo.resultado_musical or '' }}</textarea>
  
@@ -103,28 +103,28 @@
         <div class="label-com-ajuda">
             <label for="observacoes">Observações:</label>
             <button type="button" class="btn-ajuda" aria-label="Ajuda: Observações"
-                data-tooltip="Registre quaisquer observações gerais sobre a sessão de estudo. Este campo será preenchido com os textos explicativos da metodologia CARDC em breve.">?</button>
+                data-tooltip="Neste item constam observações referentes a impressões na coleta, observações técnicas/musicais, ideias abstratas referentes a trechos musicais, etc. Trata-se de um item mais abstrato, sendo importante anotar também pois dentro do processo essas conexões podem ajudar na triangulação de dados nas análises.">?</button>
         </div>
         <textarea id="observacoes" name="observacoes" rows="3">{{ ciclo.observacoes or '' }}</textarea>
  
         <div class="label-com-ajuda">
             <label for="pensamentos_associados">Pensamentos associados:</label>
             <button type="button" class="btn-ajuda" aria-label="Ajuda: Pensamentos associados"
-                data-tooltip="Registre os pensamentos que surgiram durante ou após a prática. Este campo será preenchido com os textos explicativos da metodologia CARDC em breve.">?</button>
+                data-tooltip="Este item é inteiramente voltado a perceber/sentir/captar aspectos abstratos do momento da realização da sessão.">?</button>
         </div>
         <textarea id="pensamentos_associados" name="pensamentos_associados" rows="3">{{ ciclo.pensamentos_associados or '' }}</textarea>
  
         <div class="label-com-ajuda">
             <label for="emocoes_associadas">Emoções associadas:</label>
             <button type="button" class="btn-ajuda" aria-label="Ajuda: Emoções associadas"
-                data-tooltip="Identifique e registre as emoções experienciadas durante a prática artística. Este campo será preenchido com os textos explicativos da metodologia CARDC em breve.">?</button>
+                data-tooltip="Assim como o item anterior, o objetivo aqui é de tentar perceber os sentimentos envolvidos em cada obra e cada trecho. Em Alguma medida este item e o anterior podem ser muito próximo e de difícil distinção. Total liberdade em anotar nesses espaços.">?</button>
         </div>
         <textarea id="emocoes_associadas" name="emocoes_associadas" rows="3">{{ ciclo.emocoes_associadas or '' }}</textarea>
  
         <div class="label-com-ajuda">
             <label for="diario_reflexivo">Diário reflexivo:</label>
             <button type="button" class="btn-ajuda" aria-label="Ajuda: Diário reflexivo"
-                data-tooltip="Consolide os insights do ciclo e planeje os próximos passos da sua prática. Este campo será preenchido com os textos explicativos da metodologia CARDC em breve.">?</button>
+                data-tooltip="O seu caráter é bem amplo, aberto, sendo uma escrita livre e reflexiva.  Serve  para captar e armazenar ideias que possam ser interessantes de serem aprofundadas, sem protocolos.">?</button>
         </div>
         <textarea id="diario_reflexivo" name="diario_reflexivo" rows="5">{{ ciclo.diario_reflexivo or '' }}</textarea>
 
