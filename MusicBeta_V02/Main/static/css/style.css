@@ -40,10 +40,8 @@ header {
     top: 0;
     width: 100%;
     z-index: 1000;
-    max-width: 1200px; 
-    margin: 0 auto;    
-    left: 0;           
-    right: 0;          
+    left: 0;
+    right: 0;
 }
 
 .header-left-side {
@@ -179,12 +177,17 @@ h2, h3 {
 .formulario input,
 .formulario textarea {
     width: 100%;
+    max-width: 100%; /* Impede que vaze do container pai */
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 1rem;
     box-sizing: border-box;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.formulario textarea {
+    resize: vertical; /* Permite redimensionar apenas para cima e para baixo */
 }
 
 .formulario input:focus,
@@ -242,6 +245,7 @@ h2, h3 {
     width: 100%;
     max-width: 400px;
     text-align: center;
+    padding: 0 20px; /* Garante que a caixa branca não encoste na borda da tela */
 }
 
 .login-box {
@@ -380,8 +384,16 @@ h2, h3 {
     margin-right: 15px;
 }
 
+/* Adicione o bloco .cycle-actions abaixo no seu CSS, logo antes do .cycle-actions a */
+.cycle-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap; /* Se faltar espaço, o botão cai para a linha de baixo sem quebrar a UI */
+    justify-content: flex-end;
+}
+
 .cycle-actions a {
-    margin-left: 10px;
+    margin-left: 0; /* O gap do .cycle-actions já cuida do espaçamento agora */
 }
 
 .btn-sm {
@@ -475,6 +487,8 @@ h2, h3 {
 .profile-stats {
     display: flex;
     justify-content: space-around;
+    flex-wrap: wrap; /* Adicionado para evitar esmagamento do texto */
+    gap: 10px; /* Garante um espaço mínimo entre os itens */
     padding: 15px;
     background-color: var(--color-secondary);
     border-radius: 10px;
@@ -483,6 +497,8 @@ h2, h3 {
 .stat-item {
     display: flex;
     flex-direction: column;
+    align-items: center; /* Centraliza o número e o texto verticalmente */
+    text-align: center;
     font-weight: bold;
     color: var(--color-text-dark);
 }
