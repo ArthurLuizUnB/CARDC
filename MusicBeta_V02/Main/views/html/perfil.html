@@ -16,8 +16,8 @@
             </div>
             <h2>{{ usuario.nome_completo if usuario.nome_completo else usuario.username }}</h2>
             <div class="profile-actions">
-                <a href="{{ url_for('routes.editar_perfil') }}" class="btn btn-edit-profile">EDIT PROFILE</a>
-                <a href="{{ url_for('routes.logout') }}" class="btn btn-logout-profile">LOG OUT</a>
+                <a href="{{ url_for('routes.editar_perfil') }}" class="btn btn-edit-profile">EDITAR PERFIL</a>
+                <a href="{{ url_for('routes.logout') }}" class="btn btn-logout-profile">SAIR</a>
             </div>
             <div class="profile-stats">
                 <div class="stat-item">

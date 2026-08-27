@@ -187,7 +187,8 @@ h2, h3 {
 }
 
 .formulario textarea {
-    resize: vertical; /* Permite redimensionar apenas para cima e para baixo */
+    resize: vertical;
+    min-height: 100px;
 }
 
 .formulario input:focus,
@@ -250,12 +251,14 @@ h2, h3 {
 
 .login-box {
     background-color: var(--color-white);
-    padding: 40px;
+    padding: 40px 20px; /* Reduzido nas laterais (20px) para dar mais espaço interno no celular */
     border-radius: 15px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     max-width: 90%;
     width: 100%;
     text-align: center;
+    margin: 0 auto; /* Centraliza horizontalmente na tela */
+    box-sizing: border-box; /* Impede que o padding deforme a caixa */
 }
 
 .login-box h1 {
@@ -397,11 +400,15 @@ h2, h3 {
 }
 
 .btn-sm {
-    padding: 5px 10px;
+    padding: 8px 10px; /* Altura ligeiramente maior para o toque */
     border-radius: 5px;
     font-size: 0.9rem;
     text-transform: none;
     font-weight: normal;
+    min-width: 85px; /* Largura idêntica para ambos os botões */
+    display: inline-block;
+    text-align: center; /* Centraliza o texto dentro da nova largura */
+    box-sizing: border-box;
 }
 
 .btn-success { background-color: #3eda62; color: white; }
@@ -958,4 +965,39 @@ h2, h3 {
     .upload-label {
         padding: 18px 12px;
     }
+}
+
+/* ===== ESTILIZAÇÃO DO UPLOAD DE FOTO (CADASTRO) ===== */
+.file-input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.file-input {
+    width: 100%;
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+    text-align: center;
+}
+
+/* Estiliza especificamente o botão cinza feio nativo */
+.file-input::file-selector-button {
+    padding: 10px 20px;
+    border-radius: 50px;
+    background-color: var(--color-secondary);
+    color: var(--color-text-dark);
+    border: 1px solid #ccc;
+    cursor: pointer;
+    font-weight: bold;
+    margin-right: 10px;
+    transition: all 0.3s ease;
+}
+
+.file-input::file-selector-button:hover {
+    background-color: var(--color-primary-light);
+    color: var(--color-white);
+    border-color: var(--color-primary-light);
 }
