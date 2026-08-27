@@ -1,0 +1,24 @@
+# Variáveis de ambiente e chaves sensíveis
+.env
+*.env
+.env.*
+
+# Scripts com credenciais de banco
+migration_*.py
+*_migration.py
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+instance/
+*.db
+*.sqlite3
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/

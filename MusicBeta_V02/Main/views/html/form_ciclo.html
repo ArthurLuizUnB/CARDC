@@ -20,38 +20,100 @@
 <label for="data_finalizacao">Finalização:</label>
         <input type="date" id="data_finalizacao" name="data_finalizacao" value="{{ ciclo.data_finalizacao if ciclo else '' }}">
 
-        <label for="video_upload">Adicionar Gravação (Galeria):</label>
-        <input type="file" id="video_upload" name="video_upload" accept="video/*">
-        
-        <div class="recorder-container">
-            <label>Ou Gravar agora (Webcam):</label>
-            <video id="videoPreview" width="100%" autoplay muted style="display: none;"></video>
-            
-            <div class="recorder-actions">
-                <button type="button" id="startRecordBtn" class="btn btn-action btn-record">Gravar</button>
-                <button type="button" id="stopRecordBtn" class="btn btn-action btn-stop" disabled>Parar</button>
-            </div>
-        </div>
+        <!-- ===== SEÇÃO DE MÍDIA: ABAS VÍDEO / ÁUDIO ===== -->
+        <div class="midia-container">
 
+            <!-- Seletor de abas -->
+            <div class="midia-abas" role="tablist">
+                <button type="button" class="midia-aba ativa" id="aba-video"
+                        role="tab" aria-selected="true" aria-controls="painel-video"
+                        onclick="alternarAba('video')">
+                    🎬 Vídeo
+                </button>
+                <button type="button" class="midia-aba" id="aba-audio"
+                        role="tab" aria-selected="false" aria-controls="painel-audio"
+                        onclick="alternarAba('audio')">
+                    🎙️ Áudio
+                </button>
+            </div>
+
+            <!-- Campo oculto que diz ao backend qual tipo está sendo enviado -->
+            <input type="hidden" name="tipo_midia" id="tipo_midia" value="video">
+
+            <!-- PAINEL VÍDEO -->
+            <div class="midia-painel" id="painel-video" role="tabpanel" aria-labelledby="aba-video">
+                <label class="upload-label" for="video_upload">
+                    <span class="upload-icone">📁</span>
+                    <span class="upload-texto">Selecionar vídeo da galeria</span>
+                    <span class="upload-subtexto">MP4, MOV, WebM — até 100MB</span>
+                    <input type="file" id="video_upload" name="video_upload"
+                           accept="video/*" class="upload-input">
+                </label>
+                <p class="upload-arquivo-nome" id="video-nome-arquivo"></p>
+            </div>
+
+            <!-- PAINEL ÁUDIO -->
+            <div class="midia-painel oculto" id="painel-audio" role="tabpanel" aria-labelledby="aba-audio">
+
+                <!-- Upload de arquivo -->
+                <label class="upload-label" for="audio_upload">
+                    <span class="upload-icone">📁</span>
+                    <span class="upload-texto">Selecionar áudio da galeria</span>
+                    <span class="upload-subtexto">MP3, M4A, WAV, OGG — até 15MB</span>
+                    <input type="file" id="audio_upload" name="audio_upload"
+                           accept="audio/*" class="upload-input">
+                </label>
+                <p class="upload-arquivo-nome" id="audio-nome-arquivo"></p>
+
+                <!-- Gravação pelo microfone -->
+                <div class="gravador-audio">
+                    <p class="gravador-titulo">Ou grave agora pelo microfone:</p>
+                    <div class="gravador-acoes">
+                        <button type="button" id="btnGravarAudio" class="btn btn-action btn-record">
+                            🎙️ Gravar
+                        </button>
+                        <button type="button" id="btnPararAudio" class="btn btn-action btn-stop" disabled>
+                            ⏹ Parar
+                        </button>
+                    </div>
+                    <p class="gravador-status" id="statusGravacao"></p>
+                </div>
+
+            </div>
+
+        </div>
+        <!-- ===== FIM DA SEÇÃO DE MÍDIA ===== -->
+
+        <!-- GALERIA DE GRAVAÇÕES SALVAS -->
         <div class="gallery-container">
             <h3>Gravações Salvas</h3>
             {% if gravacoes %}
                 <ul class="recording-list">
                 {% for gravacao in gravacoes %}
                     <li class="recording-item">
-                        <video width="100%" controls>
-                            <source src="{{ gravacao.url_video }}" type="video/webm">
-                            <source src="{{ gravacao.url_video }}" type="video/mp4">
-                            Seu navegador não suporta vídeos.
-                        </video>
+                        {% if gravacao.tipo == 'audio' %}
+                            <div class="audio-player">
+                                <span class="audio-icone">🎙️</span>
+                                <audio controls>
+                                    <source src="{{ gravacao.url_video }}">
+                                    Seu navegador não suporta áudio.
+                                </audio>
+                            </div>
+                        {% else %}
+                            <video width="100%" controls>
+                                <source src="{{ gravacao.url_video }}" type="video/webm">
+                                <source src="{{ gravacao.url_video }}" type="video/mp4">
+                                Seu navegador não suporta vídeos.
+                            </video>
+                        {% endif %}
                         <p class="recording-date">
-                            Enviado em: {{ gravacao.data_envio.strftime('%d/%m/%Y às %H:%M') }}
+                            {{ '🎙️ Áudio' if gravacao.tipo == 'audio' else '🎬 Vídeo' }}
+                            · Enviado em: {{ gravacao.data_envio.strftime('%d/%m/%Y às %H:%M') }}
                         </p>
-
-                        <a href="{{ url_for('routes.remover_gravacao', gravacao_id=gravacao.id) }}" 
+                        <a href="{{ url_for('routes.remover_gravacao', gravacao_id=gravacao.id) }}"
                            class="btn-sm btn-danger btn-delete-video"
-                           onclick="return confirm('Tem a certeza que quer apagar este vídeo? Esta ação não pode ser desfeita.')">
-                           Excluir Vídeo
+                           onclick="return confirm('Tem certeza que quer apagar esta mídia? Esta ação não pode ser desfeita.')">
+                           Excluir
                         </a>
                     </li>
                 {% endfor %}
