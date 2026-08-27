@@ -1,88 +1,111 @@
 // MusicBeta_V02/Main/static/js/recorder.js
+// Gerencia as abas de mídia (vídeo/áudio) e a gravação pelo microfone.
 
-// Espera o DOM estar pronto
 document.addEventListener("DOMContentLoaded", () => {
-    
-    // 1. Pega os elementos do HTML
-    const startRecordBtn = document.getElementById("startRecordBtn");
-    const stopRecordBtn = document.getElementById("stopRecordBtn");
-    const videoPreview = document.getElementById("videoPreview"); // <video> para o preview
-    const videoUploadInput = document.getElementById("video_upload"); // <input type="file">
 
-    if (!startRecordBtn) {
-        // Se não encontrar os botões (ex: em outra página), não faz nada
-        return;
+    // ===== ALTERNÂNCIA DE ABAS =====
+    window.alternarAba = function(tipo) {
+        const painelVideo = document.getElementById("painel-video");
+        const painelAudio = document.getElementById("painel-audio");
+        const abaVideo    = document.getElementById("aba-video");
+        const abaAudio    = document.getElementById("aba-audio");
+        const tipoMidia   = document.getElementById("tipo_midia");
+
+        if (!painelVideo) return;
+
+        if (tipo === "audio") {
+            painelVideo.classList.add("oculto");
+            painelAudio.classList.remove("oculto");
+            abaVideo.classList.remove("ativa");
+            abaAudio.classList.add("ativa");
+            abaVideo.setAttribute("aria-selected", "false");
+            abaAudio.setAttribute("aria-selected", "true");
+            tipoMidia.value = "audio";
+        } else {
+            painelAudio.classList.add("oculto");
+            painelVideo.classList.remove("oculto");
+            abaAudio.classList.remove("ativa");
+            abaVideo.classList.add("ativa");
+            abaAudio.setAttribute("aria-selected", "false");
+            abaVideo.setAttribute("aria-selected", "true");
+            tipoMidia.value = "video";
+        }
+    };
+
+    // ===== EXIBIR NOME DO ARQUIVO SELECIONADO =====
+    const videoInput = document.getElementById("video_upload");
+    const audioInput = document.getElementById("audio_upload");
+
+    if (videoInput) {
+        videoInput.addEventListener("change", () => {
+            const nome = videoInput.files[0]?.name || "";
+            document.getElementById("video-nome-arquivo").textContent =
+                nome ? "📎 " + nome : "";
+        });
     }
 
-    let mediaRecorder; // O objeto que realmente grava
-    let recordedChunks = []; // Um array para guardar os "pedaços" do vídeo
+    if (audioInput) {
+        audioInput.addEventListener("change", () => {
+            const nome = audioInput.files[0]?.name || "";
+            document.getElementById("audio-nome-arquivo").textContent =
+                nome ? "📎 " + nome : "";
+        });
+    }
 
-    // 2. Ação do Botão "Gravar"
-    startRecordBtn.addEventListener("click", async () => {
+    // ===== GRAVAÇÃO DE ÁUDIO PELO MICROFONE =====
+    const btnGravar = document.getElementById("btnGravarAudio");
+    const btnParar  = document.getElementById("btnPararAudio");
+    const status    = document.getElementById("statusGravacao");
+
+    if (!btnGravar) return;
+
+    let mediaRecorder;
+    let chunks = [];
+
+    btnGravar.addEventListener("click", async () => {
         try {
-            // Pedir permissão para câmera e microfone
-            const stream = await navigator.mediaDevices.getUserMedia({ 
-                video: true, 
-                audio: true 
-            });
-            
-            // Mostrar o preview da câmera no elemento <video>
-            videoPreview.srcObject = stream;
-            videoPreview.style.display = "block"; // Mostra o player
-            
-            // Inicia o gravador
-            mediaRecorder = new MediaRecorder(stream);
-            
-            // O que fazer quando o gravador parar
-            mediaRecorder.onstop = () => {
-                // 1. Cria um "Blob" (um arquivo "virtual") com os pedaços gravados
-                const videoBlob = new Blob(recordedChunks, { type: "video/webm" });
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-                // 2. Cria um objeto "File" a partir do Blob
-                const recordedFile = new File([videoBlob], "gravacao.webm", {
-                    type: "video/webm",
-                    lastModified: new Date().getTime(),
+            mediaRecorder = new MediaRecorder(stream);
+            chunks = [];
+
+            mediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) chunks.push(e.data);
+            };
+
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(chunks, { type: "audio/webm" });
+                const file = new File([blob], "gravacao.webm", {
+                    type: "audio/webm",
+                    lastModified: Date.now(),
                 });
 
-                // 3. ESSENCIAL: Coloca o arquivo gravado dentro do input "video_upload"
-                // Para isso, usamos um DataTransfer
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(recordedFile);
-                videoUploadInput.files = dataTransfer.files;
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                audioInput.files = dt.files;
 
-                // Limpa os pedaços e o stream
-                recordedChunks = [];
-                stream.getTracks().forEach(track => track.stop()); // Desliga a câmera
-                videoPreview.srcObject = null;
-                
-                // Atualiza a interface
-                startRecordBtn.classList.remove("is-recording");
-                startRecordBtn.disabled = false;
-                stopRecordBtn.disabled = true;
-                alert("Gravação finalizada! Clique em 'Salvar' no final do formulário para enviar.");
+                stream.getTracks().forEach(t => t.stop());
+
+                btnGravar.disabled = false;
+                btnParar.disabled  = true;
+                btnGravar.classList.remove("is-recording");
+                status.textContent = "✅ Gravação pronta! Clique em 'Salvar' para enviar.";
+                document.getElementById("audio-nome-arquivo").textContent = "📎 gravacao.webm";
             };
 
-            // O que fazer quando um "pedaço" de vídeo estiver pronto
-            mediaRecorder.ondataavailable = (event) => {
-                if (event.data.size > 0) {
-                    recordedChunks.push(event.data);
-                }
-            };
-
-            // Inicia a gravação e atualiza a interface
             mediaRecorder.start();
-            startRecordBtn.classList.add("is-recording");
-            startRecordBtn.disabled = true;
-            stopRecordBtn.disabled = false;
+            btnGravar.disabled = true;
+            btnParar.disabled  = false;
+            btnGravar.classList.add("is-recording");
+            status.textContent = "🔴 Gravando...";
 
-        } catch (error) {
-            console.error("Erro ao acessar a câmera:", error);
-            alert("Não foi possível acessar sua câmera. Verifique as permissões do navegador.");
+        } catch (err) {
+            console.error("Erro ao acessar o microfone:", err);
+            status.textContent = "❌ Não foi possível acessar o microfone. Verifique as permissões.";
         }
     });
 
-    // 3. Ação do Botão "Parar"
-    stopRecordBtn.addEventListener("click", () => {
+    btnParar.addEventListener("click", () => {
         if (mediaRecorder && mediaRecorder.state === "recording") {
             mediaRecorder.stop();
         }
