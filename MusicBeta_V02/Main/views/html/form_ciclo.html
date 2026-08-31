@@ -7,7 +7,6 @@
 
     <form action="{{ url_for('routes.novo_ciclo') if not ciclo else url_for('routes.editar_ciclo', ciclo_id=ciclo.id) }}" method="POST" class="formulario" enctype="multipart/form-data">
 
-        <h3>1º Passo</h3>
         <label for="obra">Obra:</label>
         <input type="text" id="obra" name="obra" required value="{{ ciclo.obra if ciclo else '' }}">
 
@@ -130,7 +129,6 @@
         </div>
         <textarea id="consideracoes_preliminares" name="consideracoes_preliminares" rows="3">{{ ciclo.consideracoes_preliminares or '' }}</textarea>
  
-        <h3 class="mt-4">2º Passo</h3>
  
         <div class="label-com-ajuda">
             <label for="acao_artistica">Ação artística:</label>
@@ -159,9 +157,7 @@
                 data-tooltip="Nesse item observa-se as principais características musicais (tópicos), de estilo, idiomática,">?</button>
         </div>
         <textarea id="resultado_musical" name="resultado_musical" rows="3">{{ ciclo.resultado_musical or '' }}</textarea>
- 
-        <h3 class="mt-4">3º Passo</h3>
- 
+
         <div class="label-com-ajuda">
             <label for="observacoes">Observações:</label>
             <button type="button" class="btn-ajuda" aria-label="Ajuda: Observações"
