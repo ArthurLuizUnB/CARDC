@@ -414,6 +414,225 @@ h2, h3 {
 .btn-success { background-color: #3eda62; color: white; }
 .btn-danger { background-color: #f33d4f; color: white; }
 
+/* Menu de 3 barras horizontais (Hambúrguer) no card do ciclo */
+.cycle-menu-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.btn-menu-bars {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px 10px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-menu-bars:hover {
+    background-color: #e2ded9;
+}
+
+.btn-menu-bars .bar {
+    display: block;
+    width: 22px;
+    height: 3px;
+    background-color: #9a9690;
+    border-radius: 2px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-menu-bars:hover .bar {
+    background-color: #6e6a64;
+}
+
+.cycle-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 195px;
+    background-color: #faf7f2;
+    border: 1px solid #e4ded5;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    padding: 6px;
+    z-index: 200;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.cycle-dropdown.aberto {
+    display: flex;
+}
+
+.cycle-dropdown .dropdown-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 9px 12px;
+    border: none;
+    background: transparent;
+    border-radius: 7px;
+    font-family: var(--font-family);
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: #4a4743;
+    text-decoration: none;
+    cursor: pointer;
+    margin-right: 0;
+    transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.cycle-dropdown .dropdown-item.item-export:hover {
+    background-color: #e8f1f8;
+    color: #2c5e8a;
+}
+
+.cycle-dropdown .dropdown-item.item-finish:hover {
+    background-color: #e6f4ea;
+    color: #2d6a3e;
+}
+
+.cycle-dropdown .dropdown-item.item-delete:hover {
+    background-color: #fae8e8;
+    color: #9e3a3a;
+}
+
+/* Modal de Exportação (<dialog>) */
+.export-modal {
+    border: none;
+    border-radius: 14px;
+    padding: 0;
+    max-width: 440px;
+    width: 92%;
+    background-color: #faf7f2;
+    color: var(--color-text-dark);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+}
+
+.export-modal::backdrop {
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.export-modal-content {
+    padding: 22px 24px;
+}
+
+.export-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid #e6e0d6;
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+}
+
+.export-modal-header h4 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #4a4743;
+}
+
+.export-modal-subtitle {
+    margin: 4px 0 0 0;
+    font-size: 0.88rem;
+    color: #7a756e;
+}
+
+.btn-close-modal {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: #8c877f;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 6px;
+}
+
+.btn-close-modal:hover {
+    background-color: #ebe5dc;
+    color: #4a4743;
+}
+
+.export-modal-instruction {
+    font-size: 0.9rem;
+    color: #66615b;
+    margin: 0 0 12px 0;
+}
+
+.export-options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.export-option-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    background-color: #ffffff;
+    border: 1px solid #e6e0d6;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #3d3a36;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.export-option-card:hover {
+    background-color: #f3efe8;
+    border-color: #cfc7ba;
+    transform: translateY(-1px);
+}
+
+.export-format-badge {
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 6px;
+    min-width: 52px;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+.badge-pdf {
+    background-color: #f7e4e4;
+    color: #8f3d3d;
+}
+
+.badge-docx {
+    background-color: #e4eef7;
+    color: #365d80;
+}
+
+.badge-txt {
+    background-color: #eae7e1;
+    color: #5c5852;
+}
+
+.export-option-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.export-option-info strong {
+    font-size: 0.95rem;
+    color: #3d3a36;
+}
+
+.export-option-info span {
+    font-size: 0.8rem;
+    color: #7a756e;
+}
+
 /* Página de Perfil */
 .profile-container {
     text-align: center;

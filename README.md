@@ -8,6 +8,7 @@
 * Gestão de Usuários: Sistema completo de cadastro, login e autenticação segura com criptografia de senhas via Bcrypt.
 * Recuperação de Senha: Funcionalidade de redefinição de acesso via e-mail utilizando tokens temporários seguros.
 * Ciclos de Estudo (CRUD): Criação, edição, visualização e remoção de registros detalhados de prática.
+* Exportação de Documentos: Geração e download de ciclos formatados em `.pdf`, `.docx` e `.txt` diretamente em memória para uso em pesquisas, teses e portfólios acadêmicos.
 * Integração Multimídia:
   * Upload de fotos de perfil e vídeos de performance para o Cloudinary.
   * Gravação de vídeo diretamente pelo navegador (Webcam/WebRTC) integrada ao fluxo de envio.
@@ -20,6 +21,7 @@
 * Servidor WSGI: Gunicorn
 * Armazenamento de Mídia: [Cloudinary](https://cloudinary.com/)
 * Segurança: Flask-Bcrypt e URLSafeTimedSerializer
+* Exportação de Documentos: ReportLab (PDF) e python-docx (Word)
 * Testes: Pytest e Pytest-Mock
 
 ## Metodologia Aplicada no Software
