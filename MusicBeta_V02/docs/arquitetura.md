@@ -54,6 +54,7 @@ MusicBeta_V02/Main/
 │
 ├── helpers/                    # CAMADA DE SERVIÇOS / UTILS: Integrações externas
 │   ├── media_upload_helper.py  # Abstração de infraestrutura para comunicação direta com a API do Cloudinary (SDK).
+│   ├── export_helper.py        # Geração em memória (BytesIO) de documentos formatados (.pdf, .docx e .txt) dos ciclos.
 │   └── mail_config.py          # Configuração e inicialização do serviço SMTP (Flask-Mail) para notificações.
 │
 ├── views/                      # CAMADA DE VISÃO: Relação com o usuário

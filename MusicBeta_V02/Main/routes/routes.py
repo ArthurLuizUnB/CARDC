@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash, g
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, g, send_file
 from controllers.auth_controller import AuthController
 from controllers.ciclo_controller import CicloController
 from models.ciclo_de_estudo import CicloDeEstudo
@@ -11,6 +11,7 @@ from functools import wraps
 from helpers.media_upload_helper import upload_video 
 from controllers.gravacao_controller import GravacaoController
 from models.gravacao import Gravacao
+from helpers.export_helper import gerar_txt, gerar_pdf, gerar_docx, gerar_nome_arquivo
 
 routes = Blueprint("routes", __name__)
 # routes/routes.py
@@ -303,6 +304,36 @@ def remover_gravacao(gravacao_id):
     
     # 4. Redireciona de volta para a página de edição do ciclo
     return redirect(url_for("routes.editar_ciclo", ciclo_id=id_ciclo))    
+
+@routes.route("/ciclo/exportar/<ciclo_id>/<formato>")
+@login_required
+def exportar_ciclo(ciclo_id, formato):
+    ciclo = CicloController.buscar_por_id(ciclo_id)
+    if not ciclo or ciclo.id_usuario != g.usuario_atual.id:
+        flash("Ciclo de estudo não encontrado ou sem permissão.", "error")
+        return redirect(url_for("routes.home"))
+
+    formato_limpo = formato.lower().strip()
+    if formato_limpo == "txt":
+        buffer = gerar_txt(ciclo)
+        mimetype = "text/plain; charset=utf-8"
+    elif formato_limpo == "pdf":
+        buffer = gerar_pdf(ciclo)
+        mimetype = "application/pdf"
+    elif formato_limpo == "docx":
+        buffer = gerar_docx(ciclo)
+        mimetype = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    else:
+        flash("Formato de exportação inválido.", "error")
+        return redirect(url_for("routes.home"))
+
+    nome_arquivo = gerar_nome_arquivo(ciclo, formato_limpo)
+    return send_file(
+        buffer,
+        mimetype=mimetype,
+        as_attachment=True,
+        download_name=nome_arquivo
+    )
 
 @routes.route("/ciclo/remover/<ciclo_id>")
 @login_required

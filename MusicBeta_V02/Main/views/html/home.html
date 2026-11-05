@@ -16,12 +16,29 @@
             <ul class="cycle-list">
                 {% for ciclo in ciclos_em_andamento %}
                     <li class="cycle-item">
-                        <a href="{{ url_for('routes.editar_ciclo', ciclo_id=ciclo.id) }}">
+                        <a href="{{ url_for('routes.editar_ciclo', ciclo_id=ciclo.id) }}" class="cycle-title-link">
                             {{ ciclo.obra }} - {{ ciclo.compositor }}
                         </a>
-                        <div class="cycle-actions">
-                            <a href="{{ url_for('routes.finalizar_ciclo', ciclo_id=ciclo.id) }}" class="btn-sm btn-success">Finalizar</a>
-                            <a href="{{ url_for('routes.remover_ciclo', ciclo_id=ciclo.id) }}" class="btn-sm btn-danger">Excluir</a>
+                        <div class="cycle-menu-wrapper">
+                            <button type="button" class="btn-menu-bars" aria-label="Opções do ciclo" onclick="alternarMenuCiclo(event, 'menu-{{ ciclo.id }}')">
+                                <span class="bar"></span>
+                                <span class="bar"></span>
+                                <span class="bar"></span>
+                            </button>
+                            <div class="cycle-dropdown" id="menu-{{ ciclo.id }}">
+                                <button type="button" class="dropdown-item item-export"
+                                        onclick="abrirModalExportacao('{{ ciclo.id }}', '{{ ciclo.obra | e }} - {{ ciclo.compositor | e }}')">
+                                    Exportar documento...
+                                </button>
+                                <a href="{{ url_for('routes.finalizar_ciclo', ciclo_id=ciclo.id) }}" class="dropdown-item item-finish">
+                                    Finalizar ciclo
+                                </a>
+                                <a href="{{ url_for('routes.remover_ciclo', ciclo_id=ciclo.id) }}"
+                                   class="dropdown-item item-delete"
+                                   onclick="return confirm('Tem certeza que deseja excluir este ciclo? Esta ação não pode ser desfeita.')">
+                                    Excluir ciclo
+                                </a>
+                            </div>
                         </div>
                     </li>
                 {% endfor %}
@@ -35,11 +52,26 @@
             <ul class="cycle-list">
                 {% for ciclo in ciclos_finalizados %}
                     <li class="cycle-item">
-                        <a href="{{ url_for('routes.editar_ciclo', ciclo_id=ciclo.id) }}">
+                        <a href="{{ url_for('routes.editar_ciclo', ciclo_id=ciclo.id) }}" class="cycle-title-link">
                             {{ ciclo.obra }} - {{ ciclo.compositor }}
                         </a>
-                        <div class="cycle-actions">
-                            <a href="{{ url_for('routes.remover_ciclo', ciclo_id=ciclo.id) }}" class="btn-sm btn-danger">Excluir</a>
+                        <div class="cycle-menu-wrapper">
+                            <button type="button" class="btn-menu-bars" aria-label="Opções do ciclo" onclick="alternarMenuCiclo(event, 'menu-{{ ciclo.id }}')">
+                                <span class="bar"></span>
+                                <span class="bar"></span>
+                                <span class="bar"></span>
+                            </button>
+                            <div class="cycle-dropdown" id="menu-{{ ciclo.id }}">
+                                <button type="button" class="dropdown-item item-export"
+                                        onclick="abrirModalExportacao('{{ ciclo.id }}', '{{ ciclo.obra | e }} - {{ ciclo.compositor | e }}')">
+                                    Exportar documento...
+                                </button>
+                                <a href="{{ url_for('routes.remover_ciclo', ciclo_id=ciclo.id) }}"
+                                   class="dropdown-item item-delete"
+                                   onclick="return confirm('Tem certeza que deseja excluir este ciclo? Esta ação não pode ser desfeita.')">
+                                    Excluir ciclo
+                                </a>
+                            </div>
                         </div>
                     </li>
                 {% endfor %}
@@ -48,4 +80,87 @@
             <p class="no-items">Nenhum ciclo finalizado.</p>
         {% endif %}
     </div>
+
+    <!-- Modal de Exportação -->
+    <dialog id="modal-exportar" class="export-modal">
+        <div class="export-modal-content">
+            <div class="export-modal-header">
+                <div>
+                    <h4>Exportar Ciclo</h4>
+                    <p id="export-modal-subtitle" class="export-modal-subtitle"></p>
+                </div>
+                <button type="button" class="btn-close-modal" onclick="fecharModalExportacao()" aria-label="Fechar">&times;</button>
+            </div>
+            <p class="export-modal-instruction">Escolha o formato em que deseja salvar o documento:</p>
+            <div class="export-options-list">
+                <a id="link-export-pdf" href="#" class="export-option-card" onclick="fecharModalExportacao()">
+                    <span class="export-format-badge badge-pdf">PDF</span>
+                    <div class="export-option-info">
+                        <strong>Documento Portátil (.pdf)</strong>
+                        <span>Ideal para leitura, impressão e anexos acadêmicos</span>
+                    </div>
+                </a>
+                <a id="link-export-docx" href="#" class="export-option-card" onclick="fecharModalExportacao()">
+                    <span class="export-format-badge badge-docx">DOCX</span>
+                    <div class="export-option-info">
+                        <strong>Documento Word (.docx)</strong>
+                        <span>Ideal para edição no Microsoft Word ou Google Docs</span>
+                    </div>
+                </a>
+                <a id="link-export-txt" href="#" class="export-option-card" onclick="fecharModalExportacao()">
+                    <span class="export-format-badge badge-txt">TXT</span>
+                    <div class="export-option-info">
+                        <strong>Texto Simples (.txt)</strong>
+                        <span>Ideal para fichamentos rápidos e citações diretas</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </dialog>
+
+    <script>
+        function alternarMenuCiclo(event, menuId) {
+            event.stopPropagation();
+            const todosMenus = document.querySelectorAll('.cycle-dropdown.aberto');
+            todosMenus.forEach(menu => {
+                if (menu.id !== menuId) {
+                    menu.classList.remove('aberto');
+                }
+            });
+            const menuAtual = document.getElementById(menuId);
+            if (menuAtual) {
+                menuAtual.classList.toggle('aberto');
+            }
+        }
+
+        function abrirModalExportacao(cicloId, tituloCiclo) {
+            document.querySelectorAll('.cycle-dropdown.aberto').forEach(m => m.classList.remove('aberto'));
+            document.getElementById('export-modal-subtitle').textContent = tituloCiclo;
+            document.getElementById('link-export-pdf').href = `/ciclo/exportar/${cicloId}/pdf`;
+            document.getElementById('link-export-docx').href = `/ciclo/exportar/${cicloId}/docx`;
+            document.getElementById('link-export-txt').href = `/ciclo/exportar/${cicloId}/txt`;
+
+            const modal = document.getElementById('modal-exportar');
+            modal.showModal();
+        }
+
+        function fecharModalExportacao() {
+            const modal = document.getElementById('modal-exportar');
+            if (modal.open) {
+                modal.close();
+            }
+        }
+
+        // Fecha menus abertos ao clicar em qualquer lugar fora
+        document.addEventListener('click', function () {
+            document.querySelectorAll('.cycle-dropdown.aberto').forEach(m => m.classList.remove('aberto'));
+        });
+
+        // Fecha o modal ao clicar no fundo escurecido (backdrop)
+        document.getElementById('modal-exportar').addEventListener('click', function (event) {
+            if (event.target === this) {
+                fecharModalExportacao();
+            }
+        });
+    </script>
 {% endblock %}
