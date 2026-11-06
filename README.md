@@ -8,6 +8,7 @@
 * Gestão de Usuários: Sistema completo de cadastro, login e autenticação segura com criptografia de senhas via Bcrypt.
 * Recuperação de Senha: Funcionalidade de redefinição de acesso via e-mail utilizando tokens temporários seguros.
 * Ciclos de Estudo (CRUD): Criação, edição, visualização e remoção de registros detalhados de prática.
+* Salvamento Automático (Auto-Save): Persistência automática em segundo plano com buffer de inatividade (Debounce) e indicador visual flutuante (`✓ Ciclo salvo`), evitando perda de reflexões durante a prática.
 * Exportação de Documentos: Geração e download de ciclos formatados em `.pdf`, `.docx` e `.txt` diretamente em memória para uso em pesquisas, teses e portfólios acadêmicos.
 * Integração Multimídia:
   * Upload de fotos de perfil e vídeos de performance para o Cloudinary.
