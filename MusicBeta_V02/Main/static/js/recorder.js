@@ -32,6 +32,21 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    // ===== EVENTOS DAS ABAS E CONFIRMAÇÕES (SEM ONCLICK NO HTML) =====
+    document.querySelectorAll("[data-aba-midia]").forEach((botao) => {
+        botao.addEventListener("click", () => {
+            window.alternarAba(botao.dataset.abaMidia);
+        });
+    });
+
+    document.querySelectorAll("[data-confirm]").forEach((link) => {
+        link.addEventListener("click", (event) => {
+            if (!window.confirm(link.dataset.confirm)) {
+                event.preventDefault();
+            }
+        });
+    });
+
     // ===== EXIBIR NOME DO ARQUIVO SELECIONADO =====
     const videoInput = document.getElementById("video_upload");
     const audioInput = document.getElementById("audio_upload");

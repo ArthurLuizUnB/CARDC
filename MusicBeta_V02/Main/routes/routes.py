@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash, g, send_file
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, g, send_file, jsonify
 from controllers.auth_controller import AuthController
 from controllers.ciclo_controller import CicloController
 from models.ciclo_de_estudo import CicloDeEstudo
@@ -266,6 +266,71 @@ def editar_ciclo(ciclo_id):
     gravacoes = GravacaoController.listar_por_ciclo(ciclo_id)
     # Passa a lista para o template
     return render_template("form_ciclo.html", ciclo=ciclo, gravacoes=gravacoes)
+
+@routes.route("/ciclo/autosave", methods=["POST"])
+@login_required
+def autosave_ciclo():
+    dados = request.get_json(silent=True) or {}
+    ciclo_id = (dados.get("ciclo_id") or "").strip()
+
+    obra = (dados.get("obra") or "").strip() or "Ciclo sem título"
+    compositor = (dados.get("compositor") or "").strip() or "Não informado"
+    data_inicio = (dados.get("data_inicio") or "").strip() or datetime.now().strftime("%Y-%m-%d")
+    status = "finalizado" if dados.get("terminado") else "em_andamento"
+
+    if ciclo_id:
+        ciclo = CicloController.buscar_por_id(ciclo_id)
+        if not ciclo or ciclo.id_usuario != g.usuario_atual.id:
+            return jsonify({"sucesso": False, "erro": "Ciclo não encontrado ou sem permissão."}), 404
+
+        ciclo.obra = obra
+        ciclo.compositor = compositor
+        ciclo.data_inicio = data_inicio
+        ciclo.data_finalizacao = dados.get("data_finalizacao")
+        ciclo.consideracoes_preliminares = dados.get("consideracoes_preliminares")
+        ciclo.acao_artistica = dados.get("acao_artistica")
+        ciclo.descricao_tarefa = dados.get("descricao_tarefa")
+        ciclo.resultado_tecnico = dados.get("resultado_tecnico")
+        ciclo.resultado_musical = dados.get("resultado_musical")
+        ciclo.observacoes = dados.get("observacoes")
+        ciclo.pensamentos_associados = dados.get("pensamentos_associados")
+        ciclo.emocoes_associadas = dados.get("emocoes_associadas")
+        ciclo.diario_reflexivo = dados.get("diario_reflexivo")
+        ciclo.status = status
+
+        sucesso = CicloController.atualizar(ciclo)
+        novo = False
+    else:
+        ciclo = CicloDeEstudo(
+            id=str(uuid.uuid4()),
+            id_usuario=g.usuario_atual.id,
+            obra=obra,
+            compositor=compositor,
+            data_inicio=data_inicio,
+            data_finalizacao=dados.get("data_finalizacao"),
+            consideracoes_preliminares=dados.get("consideracoes_preliminares"),
+            acao_artistica=dados.get("acao_artistica"),
+            descricao_tarefa=dados.get("descricao_tarefa"),
+            resultado_tecnico=dados.get("resultado_tecnico"),
+            resultado_musical=dados.get("resultado_musical"),
+            observacoes=dados.get("observacoes"),
+            pensamentos_associados=dados.get("pensamentos_associados"),
+            emocoes_associadas=dados.get("emocoes_associadas"),
+            diario_reflexivo=dados.get("diario_reflexivo"),
+            status=status,
+        )
+        sucesso = CicloController.adicionar(ciclo)
+        novo = True
+
+    if not sucesso:
+        return jsonify({"sucesso": False, "erro": "Falha ao salvar no banco de dados."}), 500
+
+    return jsonify({
+        "sucesso": True,
+        "ciclo_id": ciclo.id,
+        "novo": novo,
+        "horario": datetime.now().strftime("%H:%M")
+    })
 
 @routes.route("/ciclo/finalizar/<ciclo_id>")
 @login_required

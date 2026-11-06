@@ -163,6 +163,123 @@ h2, h3 {
 }
 
 /* Formulários */
+/* Balão flutuante de salvamento automático */
+.autosave-toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 950;
+    padding: 10px 18px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    opacity: 0;
+    transform: translateY(12px);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.25s ease, color 0.25s ease;
+}
+
+.autosave-toast.visivel {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.autosave-toast.salvando {
+    background-color: #faf7f2;
+    color: #5c5852;
+    border: 1px solid #dfd8cd;
+}
+
+.autosave-toast.salvo {
+    background-color: #e6f4ea;
+    color: #2d6a3e;
+    border: 1px solid #c6e6cf;
+}
+
+.autosave-toast.erro {
+    background-color: #fae8e8;
+    color: #9e3a3a;
+    border: 1px solid #f2c9c9;
+}
+
+/* Rodapé do Ciclo: Toggle de Finalizar + Voltar */
+.ciclo-footer-box {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #ebe5dc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+.finalizar-card-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 12px 24px;
+    border-radius: 50px;
+    background-color: #f5f1ea;
+    border: 1.5px solid #ded7cc;
+    color: #5c5852;
+    font-weight: 600;
+    font-size: 0.96rem;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.22s ease;
+}
+
+.finalizar-card-toggle:hover {
+    background-color: #ece6dc;
+    border-color: #cfc6b8;
+}
+
+.finalizar-card-toggle.ativo {
+    background-color: #e6f4ea;
+    border-color: #b7dfc2;
+    color: #2d6a3e;
+}
+
+.finalizar-checkbox-oculto {
+    display: none !important;
+}
+
+.finalizar-icone-check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: #e0dad0;
+    color: transparent;
+    font-size: 0.8rem;
+    font-weight: 700;
+    transition: all 0.22s ease;
+}
+
+.finalizar-card-toggle.ativo .finalizar-icone-check {
+    background-color: #388e50;
+    color: #ffffff;
+}
+
+.btn-voltar-suave {
+    display: inline-block;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #7a756e;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-voltar-suave:hover {
+    color: #3d3a36;
+    background-color: #f3efe8;
+}
 .formulario {
     display: flex;
     flex-direction: column;
